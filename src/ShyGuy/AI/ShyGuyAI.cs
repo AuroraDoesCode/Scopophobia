@@ -4,6 +4,7 @@ using System.ComponentModel.Design;
 using System.Linq;
 
 using GameNetcodeStuff;
+using Newtonsoft.Json.Schema;
 using Scopophobia;
 using Unity.Netcode;
 using UnityEngine;
@@ -285,7 +286,7 @@ namespace ShyGuy.AI
                             creatureVoice.Stop();
                             sitting = true;
                             creatureAnimator.SetBool("Sitting", value: true);
-                            creatureVoice.volume = 0.5f;
+                            creatureVoice.volume = ScopophobiaPlugin.ShyGuyVolume;
                             creatureVoice.clip = crySittingSFX;
                             creatureVoice.Play();
                             creatureVoice.time = preTime;
@@ -306,7 +307,7 @@ namespace ShyGuy.AI
                             roamShouldSit = false;
                             roamWaitTime = Random.Range(21f, 25f);
                             creatureAnimator.SetBool("Sitting", value: false);
-                            creatureVoice.volume = 0.5f;
+                            creatureVoice.volume = ScopophobiaPlugin.ShyGuyVolume;
                             creatureVoice.clip = crySFX;
                             creatureVoice.Play();
                             creatureVoice.time = preTime;
@@ -570,15 +571,15 @@ namespace ShyGuy.AI
                         SetShyGuyInitialValues();
                         previousState = 0;
                         mainCollider.isTrigger = true;
-                        farAudio.volume = 0f;
-                        creatureVoice.volume = 0.5f;
+                        farAudio.volume = 0f; 
+                        creatureVoice.volume = ScopophobiaPlugin.ShyGuyVolume;
                         creatureVoice.clip = crySFX;
                         creatureVoice.Play();
                         creatureVoice.time = preTime;
                     }
                     if (!creatureVoice.isPlaying)
                     {
-                        creatureVoice.volume = 0.5f;
+                        creatureVoice.volume = ScopophobiaPlugin.ShyGuyVolume;
                         creatureVoice.clip = crySFX;
                         creatureVoice.Play();
                         creatureVoice.time = preTime;
@@ -617,7 +618,7 @@ namespace ShyGuy.AI
                         creatureAnimator.SetBool("Rage", value: true);
                         creatureAnimator.SetBool("triggered", value: false);
                         farAudio.Stop();
-                        farAudio.volume = 0.4f;
+                        farAudio.volume = ScopophobiaPlugin.ShyGuyVolume - 1f;
                         farAudio.clip = screamSFX;
                         farAudio.Play();
                         farAudio.time = preTime;//read all audio as components
