@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using BepInEx.Logging;
-using DunGen;
+
 using GameNetcodeStuff;
 using Scopophobia;
 using Unity.Netcode;
@@ -28,7 +25,7 @@ namespace ShyGuy.AI
         public HangarShipDoor shipDoors;
 
         public static bool pryingOpenDoors;
-
+        
         public AudioClip shipAlarm;
 
         public AudioSource breakDownDoorAudio;
@@ -288,10 +285,10 @@ namespace ShyGuy.AI
                             creatureVoice.Stop();
                             sitting = true;
                             creatureAnimator.SetBool("Sitting", value: true);
-                            creatureVoice.GetComponent<AudioSource>().volume = 0.5f;
-                            creatureVoice.GetComponent<AudioSource>().clip = crySittingSFX;
-                            creatureVoice.GetComponent<AudioSource>().Play();
-                            creatureVoice.GetComponent<AudioSource>().time = preTime;
+                            creatureVoice.volume = 0.5f;
+                            creatureVoice.clip = crySittingSFX;
+                            creatureVoice.Play();
+                            creatureVoice.time = preTime;
                             lastInterval = Time.realtimeSinceStartup;
                         }
                         else if (!(base.targetPlayer != null) && base.targetPlayer == null && !roamMap.inProgress && roamWaitTime <= 0f)
@@ -309,10 +306,10 @@ namespace ShyGuy.AI
                             roamShouldSit = false;
                             roamWaitTime = Random.Range(21f, 25f);
                             creatureAnimator.SetBool("Sitting", value: false);
-                            creatureVoice.GetComponent<AudioSource>().volume = 0.5f;
-                            creatureVoice.GetComponent<AudioSource>().clip = crySFX;
-                            creatureVoice.GetComponent<AudioSource>().Play();
-                            creatureVoice.GetComponent<AudioSource>().time = preTime;
+                            creatureVoice.volume = 0.5f;
+                            creatureVoice.clip = crySFX;
+                            creatureVoice.Play();
+                            creatureVoice.time = preTime;
                             lastInterval = Time.realtimeSinceStartup;
                         }
                         break;
@@ -440,7 +437,7 @@ namespace ShyGuy.AI
                             }
                             if (BreakIntoShip())
                             {
-                                break;
+                                return;
                             }
                             else//Player in sights, continuing attack strategy
                             {
@@ -573,18 +570,18 @@ namespace ShyGuy.AI
                         SetShyGuyInitialValues();
                         previousState = 0;
                         mainCollider.isTrigger = true;
-                        farAudio.GetComponent<AudioSource>().volume = 0f;
-                        creatureVoice.GetComponent<AudioSource>().volume = 0.5f;
-                        creatureVoice.GetComponent<AudioSource>().clip = crySFX;
-                        creatureVoice.GetComponent<AudioSource>().Play();
-                        creatureVoice.GetComponent<AudioSource>().time = preTime;
+                        farAudio.volume = 0f;
+                        creatureVoice.volume = 0.5f;
+                        creatureVoice.clip = crySFX;
+                        creatureVoice.Play();
+                        creatureVoice.time = preTime;
                     }
                     if (!creatureVoice.isPlaying)
                     {
-                        creatureVoice.GetComponent<AudioSource>().volume = 0.5f;
-                        creatureVoice.GetComponent<AudioSource>().clip = crySFX;
-                        creatureVoice.GetComponent<AudioSource>().Play();
-                        creatureVoice.GetComponent<AudioSource>().time = preTime;
+                        creatureVoice.volume = 0.5f;
+                        creatureVoice.clip = crySFX;
+                        creatureVoice.Play();
+                        creatureVoice.time = preTime;
                     }
                     break;
                 case 1:
@@ -620,10 +617,10 @@ namespace ShyGuy.AI
                         creatureAnimator.SetBool("Rage", value: true);
                         creatureAnimator.SetBool("triggered", value: false);
                         farAudio.Stop();
-                        farAudio.GetComponent<AudioSource>().volume = 0.4f;
-                        farAudio.GetComponent<AudioSource>().clip = screamSFX;
-                        farAudio.GetComponent<AudioSource>().Play();
-                        farAudio.GetComponent<AudioSource>().time = preTime;//read all audio as components
+                        farAudio.volume = 0.4f;
+                        farAudio.clip = screamSFX;
+                        farAudio.Play();
+                        farAudio.time = preTime;//read all audio as components
                     }
                     break;
             }
@@ -827,7 +824,7 @@ namespace ShyGuy.AI
             //creatureAnimator.SetBool("PryingOpenDoor", value: true);
             //shipDoors.shipDoorsAnimator.SetBool("PryingOpenDoor", value: true);
            // shipDoors.shipDoorsAnimator.SetFloat("pryOpenDoor", 0f);
-            GameObject.FindObjectOfType<GiantKiwiAI>().breakDownDoorAudio.PlayOneShot(breakAndEnter);
+            breakDownDoorAudio.PlayOneShot(breakAndEnter);
             WalkieTalkie.TransmitOneShotAudio(breakDownDoorAudio, breakAndEnter);
             RoundManager.Instance.PlayAudibleNoise(base.transform.position, 15f, 0.9f);
             if (Vector3.Distance(StartOfRound.Instance.audioListener.transform.position, base.transform.position) < 15f)

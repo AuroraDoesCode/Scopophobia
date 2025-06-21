@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 617651422
+CRC: 1220687589
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e3c3492be431f739c8f4063bec63041f
+    Hash: eff9e9019c9b167099058b334bb3feed
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 6c3ded2c2e76eba3e6100860a4262829
+    Hash: ec42d69e49d978674c6f67aa5db817f8
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: e3c3492be431f739c8f4063bec63041f
+    Hash: eff9e9019c9b167099058b334bb3feed
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -45,8 +45,6 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 65d3fcb39dd67306e9bb17a603308070, type: 3}
 - Class: 114
-  Script: {fileID: -105790128, guid: 30880ecc79f0282438c9f4df5f9d389f, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: 04f75356a7e9c978bddc7d568e58a50b, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 3c36d0a92cbb1f26a39169ef0eae393a, type: 3}
@@ -58,6 +56,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: d3cecf05b78b173605122a700874719c, type: 3}
+- Class: 114
+  Script: {fileID: -105790128, guid: 30880ecc79f0282438c9f4df5f9d389f, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 135
@@ -86,7 +86,6 @@ SerializeReferenceClassIdentifiers:
 Assets:
 - Assets/scptriggered.ogg
 - Assets/Armature_docilesit_to_idle.anim
-- Assets/ShyGuy.prefab
 - Assets/096screams.ogg
 - Assets/test0961.png
 - Assets/Armature_docileidle.anim
@@ -98,6 +97,7 @@ Assets:
 - Assets/ShyGuyTerminalLore.asset
 - Assets/Armature_rageidle.anim
 - Assets/Shyguy_Successfulattack.ogg
+- Assets/ShyGuy.prefab
 - Assets/Armature_docilesit_action.anim
 - Assets/Armature_killplayer.anim
 - Assets/old096cbcry.ogg

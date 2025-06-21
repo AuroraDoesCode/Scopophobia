@@ -24,7 +24,7 @@ namespace Scopophobia
         public static SpawnableEnemyWithRarity maskedPrefab;
 
         public static ManualLogSource logger;
-
+        public static float ShyGuyVolume;
         public static SpawnableEnemyWithRarity shyPrefab;
 
         public static Config MyConfig { get; internal set; }
@@ -62,6 +62,7 @@ namespace Scopophobia
             base.Config.TryGetEntry("Values", "Spawn Rarity", out ConfigEntry<int> spawnWeight);
             int useWeight = spawnWeight?.Value ?? 15;
             shyGuy = Assets.LoadAsset<EnemyType>("ShyGuyDef.asset");
+            ShyGuyVolume = Scopophobia.Config.VolumeConfig.Value;
             TerminalNode val = Assets.LoadAsset<TerminalNode>("ShyGuyTerminal.asset");
             TerminalKeyword val2 = Assets.LoadAsset<TerminalKeyword>("ShyGuyKeyword.asset");
             NetworkPrefabs.RegisterNetworkPrefab(shyGuy.enemyPrefab);

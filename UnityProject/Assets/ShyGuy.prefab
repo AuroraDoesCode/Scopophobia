@@ -689,7 +689,7 @@ GameObject:
   - component: {fileID: 23203590621876837}
   - component: {fileID: 65913994609552612}
   - component: {fileID: 114427126942645857}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: ScanNode
   m_TagString: unknown_20029
   m_Icon: {fileID: 0}
@@ -799,7 +799,7 @@ MonoBehaviour:
   requiresLineOfSight: 0
   headerText: Shy guy
   subText: 
-  scrapValue: 0
+  scrapValue: -1
   creatureScanID: 9696
   nodeType: 1
 --- !u!1 &1325737393544092
@@ -1301,7 +1301,7 @@ GameObject:
   - component: {fileID: 4501644949699801}
   - component: {fileID: 33199775410505127}
   - component: {fileID: 23458958703546321}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: MapDot
   m_TagString: unknown_20029
   m_Icon: {fileID: 0}
@@ -1832,6 +1832,7 @@ Transform:
   - {fileID: 4805949388084324}
   - {fileID: 4501644949699801}
   - {fileID: 4730595998826093}
+  - {fileID: 5307614480903874612}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -0, z: -0}
 --- !u!114 &114650066351672374
@@ -1852,7 +1853,7 @@ MonoBehaviour:
   creatureAnimator: {fileID: 95760043015646158}
   creatureVoice: {fileID: 82286839826629247}
   creatureSFX: {fileID: 82711277904658589}
-  eye: {fileID: 4810006241302499}
+  eye: {fileID: 0}
   dieSFX: {fileID: 8300000, guid: 917556e3da47ccb479c7e993b4d9fe94, type: 3}
   enemyBehaviourStates:
   - name: Roaming
@@ -1953,8 +1954,8 @@ MonoBehaviour:
   CompanyCruiser: {fileID: 0}
   shipDoors: {fileID: 0}
   shipAlarm: {fileID: 8300000, guid: 57dad9531228736449d71c57d62b787b, type: 3}
-  breakDownDoorAudio: {fileID: 0}
-  breakAndEnter: {fileID: 0}
+  breakDownDoorAudio: {fileID: 4048157823105611688}
+  breakAndEnter: {fileID: 8300000, guid: f7540dd8e58f0984a84e063eeecf9061, type: 3}
   preTime: 0
   farAudio: {fileID: 82884239528316546}
   typeName: ShyGuyAI
@@ -2038,11 +2039,11 @@ AudioSource:
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
-  DopplerLevel: 0.33
-  MinDistance: 3
+  DopplerLevel: 1
+  MinDistance: 9.5
   MaxDistance: 16
   Pan2D: 0
-  rolloffMode: 2
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -2075,7 +2076,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -2756,3 +2757,131 @@ Transform:
   - {fileID: 4774311366988266}
   m_Father: {fileID: 4900160082372730}
   m_LocalEulerAnglesHint: {x: 3.5733044, y: 0.2964168, z: 177.63258}
+--- !u!1 &7687943683919620752
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5307614480903874612}
+  - component: {fileID: 4048157823105611688}
+  m_Layer: 19
+  m_Name: breakDownDoorAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5307614480903874612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7687943683919620752}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4593658435664977}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &4048157823105611688
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7687943683919620752}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
