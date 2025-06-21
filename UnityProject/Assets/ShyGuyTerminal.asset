@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e80ae96b3eb9177eea5c8f9dadbcda1, type: 3}
+  m_Name: ShyGuyTerminal
+  m_EditorClassIdentifier:
+  displayText: "The \"Shy Guy\"\n\nSigurd's danger level: 90%\n\nScientific name: Cryptohominis-luctus.\r\n\r\nRecently discovered by the crew and affectionately dubbed the \"shy guy,\" this unique species has been scarcely encountered on several moons, typically seeming to prefer cold, metallic environments. This humanoid, standing at 2.4 meters with a slender, almost malnourished build, is notable for its long arms, each 1.5 meters. The shy guy is pigment-free and hairless, with a jaw that opens four times wider than a human's. Despite human-like facial features, its pigment-free eyes suggest possible blindness. The creature's intelligence and consciousness are debated, as it lacks signs of higher cognitive functions.\r\n\r\nIn its natural state, the shy guy is extremely docile, often seen pacing slowly. However, its demeanor dramatically changes when its face is seen, either directly or in imagery. It reacts with intense emotional distress, covering its face and emitting screams, cries, and incoherent sounds. Within minutes of being seen, it aggressively pursues the observer. This behavior, both intriguing and alarming, highlights the need for further research into this mysterious entity.\r"
+  terminalEvent:
+  clearPreviousText: 1
+  maxCharactersToType: 35
+  buyItemIndex: -1
+  isConfirmationNode: 0
+  buyRerouteToMoon: -1
+  displayPlanetInfo: -1
+  lockedInDemo: 0
+  shipUnlockableID: -1
+  buyUnlockable: 0
+  returnFromStorage: 0
+  itemCost: 0
+  creatureFileID: 9696
+  creatureName: Shy guy
+  storyLogFileID: -1
+  overrideOptions: 0
+  acceptAnything: 0
+  terminalOptions: []
+  playClip: {fileID: 0}
+  playSyncedClip: 2
+  displayTexture: {fileID: 0}
+  displayVideo: {fileID: 32900000, guid: 2f16a65b1f08c8f4db057ca39267fdd1, type: 3}
+  loadImageSlowly: 1
+  persistentImage: 0

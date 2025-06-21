@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 2f16a65b1f08c8f4db057ca39267fdd1
+VideoClipImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  frameRange: 0
+  startFrame: 0
+  endFrame: 99
+  colorSpace: 0
+  deinterlace: 0
+  encodeAlpha: 0
+  flipVertical: 0
+  flipHorizontal: 0
+  importAudio: 1
+  targetSettings: {}
+  userData: 
+  assetBundleName: scp096
+  assetBundleVariant: 

@@ -35,10 +35,10 @@ namespace ShyGuy.AI
 
         public AudioClip breakAndEnter;
 
+        public float preTime;
 
         public AudioSource farAudio;
         public string typeName = "ShyGuyAI";
-        float preTime = Time.deltaTime;
         public AudioSource footstepSource;
 
         public AudioClip screamSFX;
@@ -106,7 +106,7 @@ namespace ShyGuy.AI
 
         private float timeToTrigger = 0.5f;
 
-        private float lastInterval = Time.realtimeSinceStartup;
+        private float lastInterval;
 
         private bool inKillAnimation;
 
@@ -124,6 +124,8 @@ namespace ShyGuy.AI
             CompanyCruiser = UnityEngine.Object.FindObjectOfType<VehicleController>();
             shipDoors = UnityEngine.Object.FindObjectOfType<HangarShipDoor>();
             triggerDuration = Config.triggerTime;
+            lastInterval = Time.realtimeSinceStartup;
+            preTime = Time.deltaTime;
             Transform leftEye = null;
             Queue<Transform> queue = new Queue<Transform>();
             queue.Enqueue(transform);
@@ -819,6 +821,15 @@ namespace ShyGuy.AI
 
         private void StartPryOpenDoorAnimationOnLocalClient()
         {
+            agent.enabled = false;
+            //pryingOpenDoors = true;
+            //inSpecialAnimation = true;
+            //creatureAnimator.SetBool("PryingOpenDoor", value: true);
+            //shipDoors.shipDoorsAnimator.SetBool("PryingOpenDoor", value: true);
+           // shipDoors.shipDoorsAnimator.SetFloat("pryOpenDoor", 0f);
+            GameObject.FindObjectOfType<GiantKiwiAI>().breakDownDoorAudio.PlayOneShot(breakAndEnter);
+            WalkieTalkie.TransmitOneShotAudio(breakDownDoorAudio, breakAndEnter);
+            RoundManager.Instance.PlayAudibleNoise(base.transform.position, 15f, 0.9f);
             if (Vector3.Distance(StartOfRound.Instance.audioListener.transform.position, base.transform.position) < 15f)
             {
                 HUDManager.Instance.ShakeCamera(ScreenShakeType.VeryStrong);
