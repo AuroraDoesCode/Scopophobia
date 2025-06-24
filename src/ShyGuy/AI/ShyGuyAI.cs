@@ -286,6 +286,7 @@ namespace ShyGuy.AI
                             creatureVoice.Stop();
                             sitting = true;
                             creatureAnimator.SetBool("Sitting", value: true);
+                            creatureVoice.time = preTime;
                             creatureVoice.volume = Config.VolumeConfigs * 0.1f;
                             creatureVoice.clip = crySittingSFX;
                             creatureVoice.Play();
@@ -307,6 +308,7 @@ namespace ShyGuy.AI
                             roamShouldSit = false;
                             roamWaitTime = Random.Range(21f, 25f);
                             creatureAnimator.SetBool("Sitting", value: false);
+                            creatureVoice.time = preTime;
                             creatureVoice.volume = Config.VolumeConfigs * 0.1f;
                             creatureVoice.clip = crySFX;
                             creatureVoice.Play();
@@ -368,7 +370,6 @@ namespace ShyGuy.AI
                         }
                         if (targetPlayer != null)
                         {
-                            bool flag = false;
                             creatureAnimator.SetFloat("DistanceToTarget", Vector3.Distance(transform.position, targetPlayer.transform.position));
                             if (roamMap.inProgress)
                             {
@@ -551,7 +552,6 @@ namespace ShyGuy.AI
                         shipDoors.shipDoorsAnimator.SetFloat("pryOpenDoor", 0.1f);
                         creatureAnimator.SetLayerWeight(1, Mathf.Max(0f, creatureAnimator.GetLayerWeight(1) - Time.deltaTime * 5f));
                         BreakIntoShip();
-                        return;
                     }
                     if (Vector3.Distance(transform.position, GameNetworkManager.Instance.localPlayerController.transform.position) < 10f)
                     {
@@ -571,7 +571,8 @@ namespace ShyGuy.AI
                         SetShyGuyInitialValues();
                         previousState = 0;
                         mainCollider.isTrigger = true;
-                        farAudio.volume = 0f; 
+                        farAudio.volume = 0f;
+                        creatureVoice.time = preTime;
                         creatureVoice.volume = Config.VolumeConfigs * 0.1f;
                         creatureVoice.clip = crySFX;
                         creatureVoice.Play();
@@ -579,6 +580,7 @@ namespace ShyGuy.AI
                     }
                     if (!creatureVoice.isPlaying)
                     {
+                        creatureVoice.time = preTime;
                         creatureVoice.volume = Config.VolumeConfigs * 0.1f;
                         creatureVoice.clip = crySFX;
                         creatureVoice.Play();
@@ -595,6 +597,7 @@ namespace ShyGuy.AI
                         creatureAnimator.SetBool("Sitting", value: false);
                         creatureAnimator.SetBool("triggered", value: true);
                         creatureVoice.Stop();
+                        farAudio.time = preTime;//read all audio as components
                         farAudio.volume = 0.275f;
                         farAudio.clip = panicSFX;
                         farAudio.Play();
@@ -618,6 +621,7 @@ namespace ShyGuy.AI
                         creatureAnimator.SetBool("Rage", value: true);
                         creatureAnimator.SetBool("triggered", value: false);
                         farAudio.Stop();
+                        farAudio.time = preTime;//read all audio as components
                         farAudio.volume = Config.VolumeConfigs * 0.1f - 0.1f;
                         farAudio.clip = screamSFX;
                         farAudio.Play();
