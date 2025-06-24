@@ -801,7 +801,7 @@ MonoBehaviour:
   subText: '[DANGER]'
   scrapValue: 0
   creatureScanID: 9696
-  nodeType: 0
+  nodeType: 1
 --- !u!1 &1325737393544092
 GameObject:
   m_ObjectHideFlags: 0

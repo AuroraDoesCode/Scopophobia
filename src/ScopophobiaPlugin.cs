@@ -76,6 +76,12 @@ namespace Scopophobia
             {
                 harmony.PatchAll(typeof(ShyGuySpawnSettings));
             }
+            AudioSource[] array = UnityEngine.Object.FindObjectsOfType<AudioSource>();
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i].spatialize = false;
+            }
+            logger.LogInfo("Scopophobia: Disabled All Spacialization Settings");
         }
         private static void InitializeNetworkBehaviours()
         {
