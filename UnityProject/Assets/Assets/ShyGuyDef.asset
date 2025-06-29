@@ -114,11 +114,13 @@ MonoBehaviour:
   pushPlayerForce: 0
   pushPlayerDistance: 0
   SizeLimit: 0
+  EnemySize: 0
   timeToPlayAudio: 0
   loudnessMultiplier: 0
   overrideVentSFX: {fileID: 0}
   nestSpawnPrefab: {fileID: 0}
   nestSpawnPrefabWidth: 0
+  nestDistanceFromShip: -1
   useMinEnemyThresholdForNest: 0
   minEnemiesToSpawnNest: 0
   hitBodySFX: {fileID: 0}
@@ -126,4 +128,21 @@ MonoBehaviour:
   deathSFX: {fileID: 0}
   stunSFX: {fileID: 8300000, guid: bb914e6e5ad5c0a4980bbb798ad81677, type: 3}
   miscAnimations: []
-  audioClips: []
+  audioClips:
+  - {fileID: 8300000, guid: 94bd7f5442c82854fa3c983442faa5e4, type: 3}
+  - {fileID: 8300000, guid: ed646c209f3750744bf1cb7532c02649, type: 3}
+  - {fileID: 8300000, guid: 2800777624dd1b1498788095339015dc, type: 3}
+  - {fileID: 8300000, guid: bf5de824d58e47b42942b209904f747f, type: 3}
+  - {fileID: 8300000, guid: e8cd83d27d3452a4b85329603a759fa6, type: 3}
+  - {fileID: 8300000, guid: ace23f015fa1fa543a27c5b7610c73ae, type: 3}
+  - {fileID: 8300000, guid: 74eb62b84657bd048be917723ea3089e, type: 3}
+  - {fileID: 8300000, guid: 3e1337d45bfc55a418418b09cb22500f, type: 3}
+  - {fileID: 8300000, guid: 7edcde2be2866094c8de21772cd0250a, type: 3}
+  - {fileID: 8300000, guid: 9e02709ce5e34a84788d3b40d8bbb3b9, type: 3}
+  - {fileID: 8300000, guid: c419c650a028f9d438b2b1915f10c9b0, type: 3}
+  - {fileID: 8300000, guid: 107d28a5617b739438eae97c9ab1fdd6, type: 3}
+  - {fileID: 8300000, guid: 7bd1cdba587a2f8458aa40fb06eb043e, type: 3}
+  - {fileID: 8300000, guid: c4e41fd73f6367e4c8ebda4424dd53bc, type: 3}
+  - {fileID: 8300000, guid: 917556e3da47ccb479c7e993b4d9fe94, type: 3}
+  - {fileID: 8300000, guid: f7540dd8e58f0984a84e063eeecf9061, type: 3}
+  - {fileID: 8300000, guid: bb914e6e5ad5c0a4980bbb798ad81677, type: 3}

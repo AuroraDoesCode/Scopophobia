@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2179178874
+CRC: 2544767170
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2254596a0a481a8e304e5e105ccdb928
+    Hash: f46256b9d7f80902fdf90fcde35656f6
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 6c3ded2c2e76eba3e6100860a4262829
+    Hash: 31db448dd0877be70776c92eb51b232b
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 2254596a0a481a8e304e5e105ccdb928
+    Hash: f46256b9d7f80902fdf90fcde35656f6
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -49,6 +49,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: 04f75356a7e9c978bddc7d568e58a50b, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: c30496d6ae6d6f907456e10a94e01ec6, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 3c36d0a92cbb1f26a39169ef0eae393a, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 6d7127b8f98ca8ec9896b384a71d39a2, type: 3}
@@ -56,6 +58,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: 0e80ae96b3eb9177eea5c8f9dadbcda1, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0bf1473be2fdebe220e46d27c67438ea, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: d3cecf05b78b173605122a700874719c, type: 3}
 - Class: 115
@@ -82,6 +86,8 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: Assembly-CSharp
   ClassName: EnemyBehaviourState
 - AssemblyName: Assembly-CSharp
+  ClassName: EnemySize
+- AssemblyName: Assembly-CSharp
   ClassName: NavSizeLimit
 Assets:
 - Assets/AudioClip/scptriggered.ogg
@@ -89,11 +95,14 @@ Assets:
 - Assets/Assets/ShyGuy.prefab
 - Assets/AudioClip/096screams.ogg
 - Assets/Shader/Hidden_HDRP_FallbackError.shader
+- Assets/AnimationClip/ShyGuyPryOpenDoor.anim
 - Assets/AudioClip/ShyGuyBreakAndEnter.ogg
+- Assets/AnimationClip/Armature_Armature_Armature_vententer_Animation Base Layer.anim
 - Assets/test0961.png
 - Assets/AnimationClip/Armature_docileidle.anim
 - Assets/Shader/HDRP_Lit.shader
 - Assets/AnimationClip/Armature_docilesit.anim
+- Assets/Assets/ShyGuyPainting1.prefab
 - Assets/Assets/ShyGuyDef.asset
 - Assets/AudioClip/killplayer.ogg
 - Assets/Material/shyguyMaterialBloody.mat
@@ -137,6 +146,7 @@ Assets:
 - Assets/AudioClip/old096cbtrigger.ogg
 - Assets/AudioClip/docileidlesit.ogg
 - Assets/AudioClip/ShipBreakInAlarm.ogg
+- Assets/Assets/ShyGuyPainting1.asset
 - Assets/Assets/ShyGuyDefLore.asset
 - Assets/AnimationClip/Armature_angeredrun_close.anim
 Dependencies: []

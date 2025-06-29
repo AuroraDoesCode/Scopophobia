@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Scopophobia
 {
-    [BepInPlugin("Scopophobia", "Scopophobia", "1.1.6")]
+    [BepInPlugin("Scopophobia", "Scopophobia", "1.1.7")]
     public class ScopophobiaPlugin : BaseUnityPlugin
     {
         private readonly Harmony harmony = new Harmony("Scopophobia");
@@ -23,6 +23,8 @@ namespace Scopophobia
 
         public static SpawnableEnemyWithRarity maskedPrefab;
         public static SpawnableEnemyWithRarity shyEnemy;
+        public static Item shyPainting1;
+        public static SpawnableItemWithRarity shyPainting1Prefab;
         public static ManualLogSource logger;
         public static float ShyGuyVolume;
         public static SpawnableEnemyWithRarity shyPrefab;

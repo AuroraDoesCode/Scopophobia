@@ -27,7 +27,7 @@ NavMeshProjectSettings:
     cost: 3
   - name: Elevator
     cost: 1
-  - name:
+  - name: Nest
     cost: 1
   - name:
     cost: 1
