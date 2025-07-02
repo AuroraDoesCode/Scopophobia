@@ -4,6 +4,7 @@ using System.Linq;
 
 using GameNetcodeStuff;
 using Scopophobia;
+using Unity.Jobs;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
@@ -119,7 +120,8 @@ namespace ShyGuy.AI
         {
             base.Start();
             CompanyCruiser = UnityEngine.Object.FindObjectOfType<VehicleController>();
-            shipDoor = UnityEngine.Object.FindObjectOfType<HangarShipDoor>();
+            shipDoor = UnityEngine.Object.FindObjectOfType<HangarShipDoor>(); 
+            elevatorScript = UnityEngine.Object.FindObjectOfType<MineshaftElevatorController>();//Lets see if the Elevator Controls exist, I hope they do, we're on the mineshaft
             triggerDuration = Config.triggerTime;
             lastInterval = Time.realtimeSinceStartup;
             Transform leftEye = null;
@@ -283,13 +285,14 @@ namespace ShyGuy.AI
                         {
                             creatureVoice.Stop();
                             sitting = true;
-                            float preTime = Time.deltaTime;
                             creatureAnimator.SetBool("Sitting", value: true);
-                            creatureVoice.time = preTime;
-                            creatureVoice.volume = Config.VolumeConfigs * 0.1f;
-                            creatureVoice.clip = crySittingSFX;
-                            creatureVoice.Play();
-                            creatureVoice.time = preTime;
+                            PlayAudioFxServerRpc(0);
+                            //float preTime = creatureVoice.time;
+                            //creatureVoice.volume = Config.VolumeConfigs * 0.1f;
+                            //creatureVoice.clip = crySittingSFX;
+                            //creatureVoice.loop = true;
+                            //creatureVoice.time = preTime;
+                            //creatureVoice.Play();
                             lastInterval = Time.realtimeSinceStartup;
                         }
                         else if (!(base.targetPlayer != null) && base.targetPlayer == null && !roamMap.inProgress && roamWaitTime <= 0f)
@@ -302,18 +305,18 @@ namespace ShyGuy.AI
                                 lastInterval = Time.realtimeSinceStartup;
                                 break;
                             }
-                            creatureVoice.Stop();
                             sitting = false;
+                            creatureVoice.Stop();
                             roamShouldSit = false; 
-                            float preTime = Time.deltaTime;
-
                             roamWaitTime = UnityEngine.Random.Range(21f, 25f);
                             creatureAnimator.SetBool("Sitting", value: false);
-                            creatureVoice.time = preTime;
-                            creatureVoice.volume = Config.VolumeConfigs * 0.1f;
-                            creatureVoice.clip = crySFX;
-                            creatureVoice.Play();
-                            creatureVoice.time = preTime;
+                            PlayAudioFxServerRpc(1);
+                            //creatureVoice.volume = Config.VolumeConfigs * 0.1f;
+                            //creatureVoice.clip = crySFX;
+                            //creatureVoice.loop = true;
+                            //float preTime = creatureVoice.time;
+                            //creatureVoice.time = preTime;
+                            //creatureVoice.Play();
                             lastInterval = Time.realtimeSinceStartup;
                         }
                         break;
@@ -380,49 +383,39 @@ namespace ShyGuy.AI
                             {
                                 ChangeOwnershipOfEnemy(targetPlayer.actualClientId);
                             }
-                            if(!isOutside && RoundManager.Instance.currentDungeonType == 4)//Checks if Shy guy is Outside, if not, will run the code in the brackets.
+                            if(!isOutside && elevatorScript != null)//Checks if Shy guy is Outside, and if the Elevator Exists in the level.
                             {
-                                elevatorScript = UnityEngine.Object.FindObjectOfType<MineshaftElevatorController>();//Lets see if the Elevator Controls exist, I hope they do, we're on the mineshaft
-                                if (elevatorScript != null)
+                                //ScopophobiaPlugin.logger.LogInfo("Starting Elevator Checks");
+                                if (isInElevatorStartRoom)
                                 {
-                                    //ScopophobiaPlugin.logger.LogInfo("Starting Elevator Checks");
-                                    if (isInElevatorStartRoom)
+                                    if (Vector3.Distance(base.transform.position, elevatorScript.elevatorBottomPoint.position) < 3f)//Check distance from Bottom Button
                                     {
-                                        if (Vector3.Distance(base.transform.position, elevatorScript.elevatorBottomPoint.position) < 3f)//Check distance from Bottom Button
-                                        {
-                                            isInElevatorStartRoom = false;
-                                            //ScopophobiaPlugin.logger.LogInfo("Shy guy is at Lower Elevator");
-                                        }
-                                    }
-                                    else if (Vector3.Distance(base.transform.position, elevatorScript.elevatorTopPoint.position) < 3f)//Another Distance check, this time for Top Button.
-                                    {
-                                        isInElevatorStartRoom = true;
-                                        //ScopophobiaPlugin.logger.LogInfo("Shy guy is at Upper Elevator");
-                                    }
-                                    if (RoundManager.Instance.currentDungeonType == 4)
-                                    {
-                                        //ScopophobiaPlugin.logger.LogInfo("Map Interior is Mineshaft, Committing to Elevator Checks");
-                                        if (!isInElevatorStartRoom)//if not in the Elevator Start Room, Need to call the Elevator
-                                        {
-                                            UseElevator(true);
-                                            //ScopophobiaPlugin.logger.LogInfo("Shy guy Going Up");
-                                            return;
-                                        }
-                                        else
-                                        {
-                                            if (!targetPlayer.isPlayerDead && targetPlayer.isPlayerControlled && targetPlayer.isInsideFactory && Vector3.Distance(targetPlayer.transform.position, elevatorScript.elevatorTopPoint.position) > 50f)//Is the player Inside, or hiding, Lets Distance check them from the Top Point
-                                            {
-                                                UseElevator(false);//Player is actually inside, Probably a fire exit. Lets go back down
-                                                //ScopophobiaPlugin.logger.LogInfo("Flag 3 set, Shy Guy Going Down");
-                                                return;
-                                            }
-                                            else//Player is outside, lets just continue
-                                            {
-                                                //ScopophobiaPlugin.logger.LogInfo("Everything Executed Correctly here. No flags needed");
-                                            }
-                                        }
+                                        isInElevatorStartRoom = false;
+                                        //ScopophobiaPlugin.logger.LogInfo("Shy guy is at Lower Elevator");
                                     }
                                 }
+                                else if (Vector3.Distance(base.transform.position, elevatorScript.elevatorTopPoint.position) < 3f)//Another Distance check, this time for Top Button.
+                                {
+                                    isInElevatorStartRoom = true;
+                                    //ScopophobiaPlugin.logger.LogInfo("Shy guy is at Upper Elevator");
+                                }
+                                //ScopophobiaPlugin.logger.LogInfo("Map Interior is Mineshaft, Committing to Elevator Checks");
+                                if (!isInElevatorStartRoom)//if not in the Elevator Start Room, Need to call the Elevator
+                                {
+                                    UseElevator(true);
+                                    //ScopophobiaPlugin.logger.LogInfo("Shy guy Going Up");
+                                    return;
+                                }
+                                else if (!targetPlayer.isPlayerDead && targetPlayer.isPlayerControlled && targetPlayer.isInsideFactory && Vector3.Distance(targetPlayer.transform.position, elevatorScript.elevatorTopPoint.position) > 50f)//Is the player Inside, or hiding, Lets Distance check them from the Top Point
+                                {
+                                    UseElevator(false);//Player is actually inside, Probably a fire exit. Lets go back down
+                                    //ScopophobiaPlugin.logger.LogInfo("Flag 3 set, Shy Guy Going Down");
+                                    return;
+                                }
+                            }
+                            if (isOutside && BreakIntoShip())
+                            {
+                                return;
                             }
                             if (targetPlayer.isInsideFactory != !isOutside)//Is Target inside or outside?
                             {
@@ -437,10 +430,6 @@ namespace ShyGuy.AI
                                     movingTowardsTargetPlayer = false;
                                     SetDestinationToPosition(mainEntrancePosition);
                                 }
-                            }
-                            if (BreakIntoShip())
-                            {
-                                break;
                             }
                             else//Player in sights, continuing attack strategy
                             {
@@ -458,7 +447,6 @@ namespace ShyGuy.AI
                     break;
             }
         }
-
         public void TeleportEnemy(Vector3 pos, bool setOutside)
         {
             Vector3 navMeshPosition = RoundManager.Instance.GetNavMeshPosition(pos);
@@ -504,14 +492,13 @@ namespace ShyGuy.AI
             }
             return false;
         }
-
         public override void Update()
         {
             if (isEnemyDead || GameNetworkManager.Instance == null)
             {
                 return;
             }
-            CalculateAnimationSpeed(); 
+            CalculateAnimationSpeed();
             if (pryingOpenDoor && inSpecialAnimation)
             {
                 base.transform.position = Vector3.Lerp(base.transform.position, shipDoor.outsideDoorPoint.position, 7f * Time.deltaTime);
@@ -519,7 +506,7 @@ namespace ShyGuy.AI
                 pryingDoorAnimTime = Mathf.Min(pryingDoorAnimTime + Time.deltaTime / pryOpenDoorAnimLength, 1f);
                 creatureAnimator.SetFloat("pryOpenDoor", pryingDoorAnimTime);
                 shipDoor.shipDoorsAnimator.SetFloat("pryOpenDoor", pryingDoorAnimTime);
-                creatureAnimator.SetLayerWeight(1, Mathf.Max(0f, creatureAnimator.GetLayerWeight(1) - Time.deltaTime * 5f));
+                creatureAnimator.SetLayerWeight(0, Mathf.Max(0f, creatureAnimator.GetLayerWeight(0) - Time.deltaTime * 5f));
                 if (pryingDoorAnimTime > 0.12f)
                 {
                     EnableEnemyMesh(enable: true);
@@ -578,24 +565,28 @@ namespace ShyGuy.AI
                     {
                         SetShyGuyInitialValues();
                         previousState = 0; 
-                        float preTime = Time.deltaTime;
 
                         mainCollider.isTrigger = true;
                         farAudio.volume = 0f;
-                        creatureVoice.time = preTime;
-                        creatureVoice.volume = Config.VolumeConfigs * 0.1f;
-                        creatureVoice.clip = crySFX;
-                        creatureVoice.Play();
-                        creatureVoice.time = preTime;
+                        creatureVoice.Stop();
+                        //float preTime = creatureVoice.time;
+                        //creatureVoice.volume = Config.VolumeConfigs * 0.1f;
+                        //creatureVoice.clip = crySittingSFX;
+                        //creatureVoice.loop = true;
+                        //creatureVoice.time = preTime;
+                        //creatureVoice.Play();
+                        PlayAudioFxServerRpc(0);
                     }
                     if (!creatureVoice.isPlaying)
                     {
-                        float preTime = Time.deltaTime;
-                        creatureVoice.time = preTime;
-                        creatureVoice.volume = Config.VolumeConfigs * 0.1f;
-                        creatureVoice.clip = crySFX;
-                        creatureVoice.Play();
-                        creatureVoice.time = preTime;
+                        creatureVoice.Stop();
+                        // creatureVoice.volume = Config.VolumeConfigs * 0.1f;
+                        //creatureVoice.clip = crySFX;
+                        //creatureVoice.loop = true;
+                        //float preTime = creatureVoice.time;
+                        //creatureVoice.time = preTime;
+                        //creatureVoice.Play();
+                        PlayAudioFxServerRpc(1);
                     }
                     break;
                 case 1:
@@ -608,13 +599,13 @@ namespace ShyGuy.AI
                         creatureAnimator.SetBool("Sitting", value: false);
                         creatureAnimator.SetBool("triggered", value: true);
                         creatureVoice.Stop();
-                        float preTime = Time.deltaTime;
-                        farAudio.time = preTime;//read all audio as components
-                        farAudio.volume = 0.275f;
-                        farAudio.clip = panicSFX;
-                        farAudio.Play();
+                        //farAudio.volume = 0.275f;
+                        //farAudio.clip = panicSFX;
+                        //float preTime = farAudio.time;
+                        //farAudio.time = preTime;
+                        //farAudio.Play();
+                        PlayAudioFxServerRpc(2);
                         agent.speed = 0f; 
-                        farAudio.time = preTime;
 
                         triggerTime = triggerDuration;
                     }
@@ -632,19 +623,34 @@ namespace ShyGuy.AI
                         previousState = 2;
                         creatureAnimator.SetBool("Rage", value: true);
                         creatureAnimator.SetBool("triggered", value: false);
-                        float preTime = Time.deltaTime;
                         farAudio.Stop();
-                        farAudio.time = preTime;//read all audio as components
-                        farAudio.volume = Config.VolumeConfigs * 0.1f - 0.1f;
-                        farAudio.clip = screamSFX;
-                        farAudio.Play();
-                        farAudio.time = preTime;//read all audio as components
+                        //farAudio.volume = Config.VolumeConfigs * 0.1f - 0.1f;
+                        //farAudio.clip = screamSFX;
+                        //float preTime = farAudio.time;
+                        //farAudio.time = preTime;
+                        //farAudio.Play();
+                        PlayAudioFxServerRpc(3);
                     }
                     break;
             }
             base.Update();
         }
-
+        [ServerRpc]
+        public void PlayAudioFxServerRpc(int audioClipID)
+        {
+            PlayAudioFXClientRpc(audioClipID);
+        }
+        [ClientRpc]
+        public void PlayAudioFXClientRpc(int audioClipID)
+        {
+            switch (audioClipID)
+            {
+                case 0: farAudio.Stop(); creatureVoice.Stop(); creatureVoice.volume = Config.VolumeConfigs * 0.1f; creatureVoice.clip = crySittingSFX; creatureVoice.loop = true; float preTime = creatureVoice.time; creatureVoice.time = preTime; creatureVoice.Play(); break;
+                case 1: creatureVoice.Stop(); creatureVoice.volume = Config.VolumeConfigs * 0.1f; creatureVoice.clip = crySFX; creatureVoice.loop = true; float preTime2 = creatureVoice.time; creatureVoice.time = preTime2; creatureVoice.Play(); break;
+                case 2: creatureVoice.Stop(); farAudio.volume = Config.VolumeConfigs * 0.1f; farAudio.clip = panicSFX; float preTime3 = farAudio.time; farAudio.loop = true; farAudio.time = preTime3; farAudio.Play(); break;
+                case 3: farAudio.Stop(); farAudio.volume = Config.VolumeConfigs * 0.1f - 0.1f; farAudio.clip = screamSFX; float preTime4 = farAudio.time; farAudio.loop = true; farAudio.time = preTime4; farAudio.Play(); break;
+            }
+        }
         public new void SetEnemyOutside(bool outside = false)
         {
             isOutside = outside;
@@ -816,11 +822,13 @@ namespace ShyGuy.AI
             FinishPryOpenDoorAnimationOnLocalClient(cancelledEarly);
             PryOpenDoorServerRpc((int)GameNetworkManager.Instance.localPlayerController.playerClientId, finishAnim: true, cancelledEarly);
         }
+
         [ServerRpc(RequireOwnership = false)]
         public void PryOpenDoorServerRpc(int playerWhoSent, bool finishAnim = false, bool cancelledEarly = false)
         {
             PryOpenDoorClientRpc(playerWhoSent, finishAnim, cancelledEarly);
         }
+
         [ClientRpc]
         public void PryOpenDoorClientRpc(int playerWhoSent, bool finishAnim = false, bool cancelledEarly = false)
         {
@@ -833,6 +841,7 @@ namespace ShyGuy.AI
                 FinishPryOpenDoorAnimationOnLocalClient(cancelledEarly);
             }
         }
+
         private void FinishPryOpenDoorAnimationOnLocalClient(bool cancelledEarly = false)
         {
             if (!cancelledEarly)
@@ -846,7 +855,7 @@ namespace ShyGuy.AI
             inSpecialAnimation = false;
             creatureAnimator.SetBool("PryingOpenDoor", value: false);
             shipDoor.shipDoorsAnimator.SetBool("PryingOpenDoor", value: false);
-            creatureAnimator.SetLayerWeight(1, 1f);
+            creatureAnimator.SetLayerWeight(0, 1f);
         }
 
         private void StartPryOpenDoorAnimationOnLocalClient()
@@ -896,6 +905,7 @@ namespace ShyGuy.AI
         {
             mainCollider = gameObject.GetComponentInChildren<Collider>();
             farAudio = transform.Find("FarAudio").GetComponent<AudioSource>();
+            creatureVoice = transform.Find("CreatureVoice").GetComponent<AudioSource>();
             targetPlayer = null;
             inKillAnimation = false;
             pryingOpenDoor = false;

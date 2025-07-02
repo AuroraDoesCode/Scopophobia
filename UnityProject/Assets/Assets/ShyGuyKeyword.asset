@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   word: shy guy
   isVerb: 0
-  compatibleNouns: []
+  compatibleNouns:
+  - noun: {fileID: 11400000, guid: 1e7eaea5a4a197346aa7b57c69c098ac, type: 2}
+    result: {fileID: 11400000, guid: 444506899ca865b4cb35f42c489688f7, type: 2}
   specialKeywordResult: {fileID: 11400000, guid: 444506899ca865b4cb35f42c489688f7,
     type: 2}
   defaultVerb: {fileID: 11400000}

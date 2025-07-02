@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2544767170
+CRC: 898794652
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: f46256b9d7f80902fdf90fcde35656f6
+    Hash: a361b834599f7c7846f7964e755a857e
   TypeTreeHash:
     serializedVersion: 2
     Hash: 31db448dd0877be70776c92eb51b232b
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: f46256b9d7f80902fdf90fcde35656f6
+    Hash: a361b834599f7c7846f7964e755a857e
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -83,6 +83,8 @@ ClassTypes:
 SerializeReferenceClassIdentifiers:
 - AssemblyName: Assembly-CSharp
   ClassName: AISearchRoutine
+- AssemblyName: Assembly-CSharp
+  ClassName: CompatibleNoun
 - AssemblyName: Assembly-CSharp
   ClassName: EnemyBehaviourState
 - AssemblyName: Assembly-CSharp
