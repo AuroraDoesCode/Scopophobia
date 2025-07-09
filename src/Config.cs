@@ -11,6 +11,7 @@ namespace Scopophobia
     [Serializable]
     public class Config : SyncedInstance<Config>
     {
+        public static ConfigEntry<bool> ExtendedLoggingConfig;
         public static ConfigEntry<bool> AppearsConfig;
 
         public static ConfigEntry<bool> HasGlowingEyesConfig;
@@ -27,7 +28,6 @@ namespace Scopophobia
 
         public static ConfigEntry<float> SpeedRageMultiplierConfig;
 
-        public static ConfigEntry<int> SpawnRarityConfig;
         public static ConfigEntry<float> VolumeConfig;
 
         public static ConfigEntry<float> TriggerTimeConfig;
@@ -42,24 +42,15 @@ namespace Scopophobia
 
         public static ConfigEntry<bool> CanExitFacilityConfig;
 
-        public static ConfigEntry<int> MaxSpawnCountConfig;
 
-        public static ConfigEntry<bool> CanSpawnOutsideConfig;
+        public ConfigEntry<string> SpawnProbabilityCurveConfig { get; private set; }
 
-        public static ConfigEntry<bool> SpawnOutsideHardPlanetsConfig;
-
-        public static ConfigEntry<float> StartEnemySpawnCurveConfig;
-
-        public static ConfigEntry<float> MidEnemySpawnCurveConfig;
-
-        public static ConfigEntry<float> EndEnemySpawnCurveConfig;
 
         public static ConfigEntry<float> ShyGuyPowerLevelConfig;
-
+        public static bool ExtendedLogging;
         public static bool appears;
 
         public static bool hasGlowingEyes;
-
         public static string soundPack;
 
         public static bool bloodyTexture;
@@ -71,8 +62,6 @@ namespace Scopophobia
         public static float speedDocileMultiplier;
 
         public static float speedRageMultiplier;
-
-        public static int spawnRarity;
 
         public static float VolumeConfigs;
 
@@ -88,57 +77,49 @@ namespace Scopophobia
 
         public static bool canExitFacility;
 
-        public static bool canSpawnOutside;
-
-        public static int maxSpawnCount;
-
-        public static bool spawnsOutside;
-
-        public static bool spawnOutsideHardPlanets;
-
-        public static float startEnemySpawnCurve;
+        public static string SpawnProbabilityCurve;
 
         public static float midEnemySpawnCurve;
 
         public static float endEnemySpawnCurve;
+
+        public static bool spawnOutsideHardPlanets;
 
         public static float ShyGuyPowerLevel;
 
         public Config(ConfigFile cfg)
         {
             InitInstance(this);
-            AppearsConfig = cfg.Bind("General", "Enable the Shy Guy", defaultValue: true, "Allows the Shy Guy to spawn in-game.");
-            HasGlowingEyesConfig = cfg.Bind("Appearance", "Glowing Eyes", defaultValue: true, "Gives the Shy Guy glowing eyes similar to the Bracken/Flowerman.");
-            BloodyTextureConfig = cfg.Bind("Appearance", "Bloody Texture", defaultValue: false, "Gives the Shy Guy his bloodier, original texture from SCP: Containment Breach.");
-            DeathMakesBloodyConfig = cfg.Bind("Appearance", "Bloody Death", defaultValue: true, "Causes the Shy Guy's material to become bloody once getting his first kill. Useless if Bloody Texture is enabled lol");
-            DisableSpawnRatesConfig = cfg.Bind("General", "Disable Spawn Patches", defaultValue: false, "Disable Spawn Rate Patching. Only use this if you use another mod to alter Spawn Rates like LethalLevelLoader.");
-            SoundPackConfig = cfg.Bind("Appearance", "Sound Pack (Curated, SCPCB, SCPCBOld, SecretLab)", "Curated", "Determines the sounds the Shy Guy uses. (SOME MAY NOT SYNC WELL WITH TRIGGER TIME) (Curated = Default, curated for the Lethal Company experience) (SCPCB = SCP-096 sounds from SCP: Containment Breach) (SCPCBOld = Old alpha SCP-096 sounds from SCP: Containment Breach) (SecretLab = SCP-096 sounds from SCP: Secret Laboratory)");
-            SpeedDocileMultiplierConfig = cfg.Bind("Values", "Speed Multiplier (Docile)", 1f, "Determines the speed multiplier of the Shy Guy while docile.");
-            SpeedRageMultiplierConfig = cfg.Bind("Values", "Speed Multiplier (Rage)", 1f, "Determines the speed multiplier of the Shy Guy while enraged.");
-            SpawnRarityConfig = cfg.Bind("Values", "Spawn Rarity", 15, "Determines the spawn weight of the Shy Guy. Higher weights mean the Shy Guy is more likely appear. (just dont set this astronomically high)");
-            VolumeConfig = cfg.Bind("Values", "Enemy Volume", 5f, "Determines the volume of the Shy Guy, and how loud he is. (Set this Anywhere between 0 and 10. Default: 5f, Old Default: 5f)");
-            TriggerTimeConfig = cfg.Bind("Values.Triggering", "Trigger Time", 66.4f, "Determines how long the Shy Guy must remain in the Triggered state to become fully enraged.");
-            FaceTriggerRangeConfig = cfg.Bind("Values.Triggering", "Face Trigger Range", 17.5f, "Determines the face's trigger radius.");
-            FaceTriggerGracePeriodConfig = cfg.Bind("Values.Triggering", "Face Trigger Grace Period", 0.5f, "Determines the grace period when you see the face of the Shy Guy before he becomes enraged.");
-            HasMaxTargetsConfig = cfg.Bind("Values.Triggering", "Has Max Targets", defaultValue: false, "Determines if the Shy Guy has a maximum amount of targets.");
-            MaxTargetsConfig = cfg.Bind("Values.Triggering", "Max Targets", 32, "Determines the max amount of targets the Shy Guy can have. (requires HasMaxTargets)");
-            CanExitFacilityConfig = cfg.Bind("Values.Triggering", "Can Exit Facility", defaultValue: true, "Determines if the Shy Guy can exit the facility and into the outdoors (and vice versa) to attack its target.");
-            MaxSpawnCountConfig = cfg.Bind("Values.Spawning", "Max Spawn Count", 1, "Determines how many Shy Guy can spawn total.");
-            CanSpawnOutsideConfig = cfg.Bind("Values.Spawning", "Can Spawn Outside", defaultValue: true, "Determines if the Shy Guy can spawn outside. ");
-            SpawnOutsideHardPlanetsConfig = cfg.Bind("Values.Spawning", "Spawn Outside Only Hard Moons", defaultValue: true, "If set to true, the Shy Guy will only spawn outside on the highest-difficulty/modded moons.");
-            StartEnemySpawnCurveConfig = cfg.Bind("Values.Spawning", "Start Spawn Curve", 0.2f, "Spawn curve for the Shy Guy when the day starts. (typically 0-1)");
-            MidEnemySpawnCurveConfig = cfg.Bind("Values.Spawning", "Midday Spawn Curve", 1f, "Spawn curve for the Shy Guy midday. (typically 0-1)");
-            EndEnemySpawnCurveConfig = cfg.Bind("Values.Spawning", "End of Day Spawn Curve", 0.75f, "Spawn curve for the Shy Guy at the end of day. (typically 0-1)");
-            ShyGuyPowerLevelConfig = cfg.Bind("Values.Spawning", "Shy Guy Power Level", 3.0f, "Default Power Level for the Shy Guy to take up per level. (Default: 3.0)");
+            BindConfigs(cfg);
+        }
+        public void BindConfigs(ConfigFile cfg)
+        {
+            AppearsConfig = Bind("General", "Enable the Shy Guy", defaultValue: true, requiresRestart: true, "Allows the Shy Guy to spawn in-game.");//used in ScopophobiaPlugin
+            ExtendedLoggingConfig = Bind("General", "Enable Extended Logging", defaultValue: false, requiresRestart: false, "Enables Error and Warning Logs [Developer]");//as above
+            HasGlowingEyesConfig = Bind("Appearance", "Glowing Eyes", defaultValue: true, requiresRestart: false, "Gives the Shy Guy glowing eyes similar to the Bracken/Flowerman.");
+            BloodyTextureConfig = Bind("Appearance", "Bloody Texture", defaultValue: false, requiresRestart: false, "Gives the Shy Guy his bloodier, original texture from SCP: Containment Breach.");
+            DeathMakesBloodyConfig = Bind("Appearance", "Bloody Death", defaultValue: true, requiresRestart: false, "Causes the Shy Guy's material to become bloody once getting his first kill. Useless if Bloody Texture is enabled lol");
+            SoundPackConfig = Bind("Appearance", "Sound Pack (Curated, SCPCB, SCPCBOld, SecretLab)", "Curated", requiresRestart: false, "Determines the sounds the Shy Guy uses. (SOME MAY NOT SYNC WELL WITH TRIGGER TIME) (Curated = Default, curated for the Lethal Company experience) (SCPCB = SCP-096 sounds from SCP: Containment Breach) (SCPCBOld = Old alpha SCP-096 sounds from SCP: Containment Breach) (SecretLab = SCP-096 sounds from SCP: Secret Laboratory)");
+            SpeedDocileMultiplierConfig = Bind("General", "Speed Multiplier (Docile)", 1f, requiresRestart: false, "Determines the speed multiplier of the Shy Guy while docile.");
+            SpeedRageMultiplierConfig = Bind("General", "Speed Multiplier (Rage)", 1f, requiresRestart: false, "Determines the speed multiplier of the Shy Guy while enraged.");
+            VolumeConfig = Bind("General", "Enemy Volume", 5f, requiresRestart: false, "Determines the volume of the Shy Guy, and how loud he is. (Set this Anywhere between 0 and 10. Default: 5f, Old Default: 5f)");//Scopoplugin
+            TriggerTimeConfig = Bind("Trigger Settings", "Trigger Time", 66.4f, requiresRestart: true, "Determines how long the Shy Guy must remain in the Triggered state to become fully enraged.");
+            FaceTriggerRangeConfig = Bind("Trigger Settings", "Face Trigger Range", 17.5f, requiresRestart: true, "Determines the face's trigger radius.");
+            FaceTriggerGracePeriodConfig = Bind("Trigger Settings", "Face Trigger Grace Period", 0.5f, requiresRestart: true, "Determines the grace period when you see the face of the Shy Guy before he becomes enraged.");
+            HasMaxTargetsConfig = Bind("Trigger Settings", "Has Max Targets", defaultValue: false, requiresRestart: true, "Determines if the Shy Guy has a maximum amount of targets.");
+            MaxTargetsConfig = Bind("Trigger Settings", "Max Targets", 32, requiresRestart: true, "Determines the max amount of targets the Shy Guy can have. (requires HasMaxTargets)");
+            CanExitFacilityConfig = Bind("Trigger Settings", "Can Exit Facility", defaultValue: true, requiresRestart: false, "Determines if the Shy Guy can exit the facility and into the outdoors (and vice versa) to attack its target.");
+            SpawnProbabilityCurveConfig = Bind("Spawn Settings", "ProbabilityCurve", defaultValue: "1.0, 1.0, 1.0", requiresRestart: false, $"Determines how likely {EnemyDataManager.EnemyName} is to spawn throughout the day. Accepts an array of floats with each entry separated by a comma.");
+            ShyGuyPowerLevelConfig = Bind("Spawn Settings", "Shy Guy Power Level", 3.0f, requiresRestart: false, "Default Power Level for the Shy Guy to take up per level. (Default: 3.0)");
+
             appears = AppearsConfig.Value;
+            ExtendedLogging = ExtendedLoggingConfig.Value;
             hasGlowingEyes = HasGlowingEyesConfig.Value;
             bloodyTexture = BloodyTextureConfig.Value;
             deathMakesBloody = DeathMakesBloodyConfig.Value;
-            DisableSpawnRates = DisableSpawnRatesConfig.Value;
             soundPack = SoundPackConfig.Value;
             speedDocileMultiplier = SpeedDocileMultiplierConfig.Value;
             speedRageMultiplier = SpeedRageMultiplierConfig.Value;
-            spawnRarity = SpawnRarityConfig.Value;
             VolumeConfigs = VolumeConfig.Value;
             triggerTime = TriggerTimeConfig.Value;
             faceTriggerRange = FaceTriggerRangeConfig.Value;
@@ -146,12 +127,7 @@ namespace Scopophobia
             hasMaxTargets = HasMaxTargetsConfig.Value;
             maxTargets = MaxTargetsConfig.Value;
             canExitFacility = CanExitFacilityConfig.Value;
-            maxSpawnCount = MaxSpawnCountConfig.Value;
-            canSpawnOutside = CanSpawnOutsideConfig.Value;
-            spawnOutsideHardPlanets = SpawnOutsideHardPlanetsConfig.Value;
-            startEnemySpawnCurve = StartEnemySpawnCurveConfig.Value;
-            midEnemySpawnCurve = MidEnemySpawnCurveConfig.Value;
-            endEnemySpawnCurve = EndEnemySpawnCurveConfig.Value;
+            SpawnProbabilityCurve = SpawnProbabilityCurveConfig.Value;
             ShyGuyPowerLevel = ShyGuyPowerLevelConfig.Value;
         }
 
@@ -185,6 +161,33 @@ namespace Scopophobia
             {
                 Plugin.logger.LogInfo($"Error occurred syncing config with client: {clientId}\n{e}");
             }
+        }
+        public static ConfigEntry<T> Bind<T>(string section, string key, T defaultValue, bool requiresRestart, string description, AcceptableValueBase acceptableValues = null, Action<T> settingChanged = null, ConfigFile configFile = null)
+        {
+            configFile ??= ScopophobiaPlugin.Instance.Config;
+
+            var configEntry = acceptableValues == null
+                ? configFile.Bind(section, key, defaultValue, description)
+                : configFile.Bind(section, key, defaultValue, new ConfigDescription(description, acceptableValues));
+
+            if (settingChanged != null)
+            {
+                configEntry.SettingChanged += (object sender, EventArgs e) => settingChanged?.Invoke(configEntry.Value);
+            }
+
+            if (Dependencies.LethalConfigProxy.Enabled)
+            {
+                if (acceptableValues == null)
+                {
+                    Dependencies.LethalConfigProxy.AddConfig(configEntry, requiresRestart);
+                }
+                else
+                {
+                    Dependencies.LethalConfigProxy.AddConfigSlider(configEntry, requiresRestart);
+                }
+            }
+
+            return configEntry;
         }
 
         public static void OnReceiveSync(ulong _, FastBufferReader reader)

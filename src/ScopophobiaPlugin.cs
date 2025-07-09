@@ -6,12 +6,15 @@ using BepInEx.Logging;
 using HarmonyLib;
 using LethalLib;
 using LethalLib.Modules;
+using Scopophobia.Dependencies;
 using Scopophobia.Patches;
 using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 
 namespace Scopophobia
 {
     [BepInPlugin("Scopophobia", "Scopophobia", "1.1.9")]
+    [BepInDependency(LethalConfigProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     public class ScopophobiaPlugin : BaseUnityPlugin
     {
         private readonly Harmony harmony = new Harmony("Scopophobia");
@@ -23,7 +26,7 @@ namespace Scopophobia
 
         public static SpawnableEnemyWithRarity maskedPrefab;
         public static SpawnableEnemyWithRarity shyEnemy;
-        public static Item shyPainting1;
+        public static Item ShyGuyPainting1;
         public static SpawnableItemWithRarity shyPainting1Prefab;
         public static ManualLogSource logger;
         public static float ShyGuyVolume;
@@ -63,21 +66,19 @@ namespace Scopophobia
             }
             base.Config.TryGetEntry("Values", "Spawn Rarity", out ConfigEntry<int> spawnWeight);
             int useWeight = spawnWeight?.Value ?? 15;
-            shyGuy = Assets.LoadAsset<EnemyType>("ShyGuyDef.asset");
             ShyGuyVolume = Scopophobia.Config.VolumeConfig.Value;
+            shyGuy = Assets.LoadAsset<EnemyType>("ShyGuyDef.asset");
             TerminalNode val = Assets.LoadAsset<TerminalNode>("ShyGuyTerminal.asset");
             TerminalKeyword val2 = Assets.LoadAsset<TerminalKeyword>("ShyGuyKeyword.asset");
-            NetworkPrefabs.RegisterNetworkPrefab(shyGuy.enemyPrefab); 
+            NetworkPrefabs.RegisterNetworkPrefab(shyGuy.enemyPrefab);
             Enemies.RegisterEnemy(shyGuy, useWeight, Levels.LevelTypes.All, Enemies.SpawnType.Default, val, val2);
             logger.LogInfo("Scopophobia | SCP-096 has entered the facility. All remaining personnel proceed with caution.");
             harmony.PatchAll(typeof(Plugin));
             harmony.PatchAll(typeof(GetShyGuyPrefabForLaterUse));
-            if (Scopophobia.Config.DisableSpawnRates)
-            { ScopophobiaPlugin.logger.LogInfo("Spawn Settings are disabled in Config. Shy guy will NOT spawn unless you use another mod like Lethal Quantities."); }
-            else
-            {
-                harmony.PatchAll(typeof(ShyGuySpawnSettings));
-            }
+            harmony.PatchAll(typeof(AudioSpatializerDisabler));//disable annoying audiospacializer issue globally
+            harmony.PatchAll(typeof(RoundManagerPatch));//credit Crit / Zehs
+            harmony.PatchAll(typeof(StartOfRoundPatch));//credit Crit / Zehs
+
         }
         private static void InitializeNetworkBehaviours()
         {
@@ -94,6 +95,22 @@ namespace Scopophobia
                         method.Invoke(null, null);
                     }
                 }
+            }
+        }
+
+        public void LogInfoExtended(object data)
+        {
+            if (Scopophobia.Config.ExtendedLogging)
+            {
+                logger.LogInfo(data);
+            }
+        }
+
+        public void LogWarningExtended(object data)
+        {
+            if (Scopophobia.Config.ExtendedLogging)
+            {
+                logger.LogWarning(data);
             }
         }
     }

@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 898794652
+CRC: 1149239654
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a361b834599f7c7846f7964e755a857e
+    Hash: c87dc96e5ab4fd5e52e5a3bb1e82c643
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 31db448dd0877be70776c92eb51b232b
+    Hash: b763361608e93572b232c242ea644952
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: a361b834599f7c7846f7964e755a857e
+    Hash: c87dc96e5ab4fd5e52e5a3bb1e82c643
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -29,6 +29,8 @@ ClassTypes:
 - Class: 48
   Script: {instanceID: 0}
 - Class: 54
+  Script: {instanceID: 0}
+- Class: 64
   Script: {instanceID: 0}
 - Class: 65
   Script: {instanceID: 0}
@@ -52,6 +54,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: c30496d6ae6d6f907456e10a94e01ec6, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 3c36d0a92cbb1f26a39169ef0eae393a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 3d0cf24d2ccc3b7eab72048d0f57c437, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 6d7127b8f98ca8ec9896b384a71d39a2, type: 3}
 - Class: 114
@@ -84,6 +88,8 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: Assembly-CSharp
   ClassName: AISearchRoutine
 - AssemblyName: Assembly-CSharp
+  ClassName: Battery
+- AssemblyName: Assembly-CSharp
   ClassName: CompatibleNoun
 - AssemblyName: Assembly-CSharp
   ClassName: EnemyBehaviourState
@@ -95,26 +101,30 @@ Assets:
 - Assets/AudioClip/scptriggered.ogg
 - Assets/AnimationClip/Armature_docilesit_to_idle.anim
 - Assets/Assets/ShyGuy.prefab
-- Assets/AudioClip/096screams.ogg
+- Assets/Assets/Cube.002.mesh
 - Assets/Shader/Hidden_HDRP_FallbackError.shader
-- Assets/AnimationClip/ShyGuyPryOpenDoor.anim
+- Assets/AudioClip/096screams.ogg
 - Assets/AudioClip/ShyGuyBreakAndEnter.ogg
+- Assets/Assets/ShyGuyPainting.prefab
 - Assets/AnimationClip/Armature_Armature_Armature_vententer_Animation Base Layer.anim
 - Assets/test0961.png
 - Assets/AnimationClip/Armature_docileidle.anim
+- Assets/Assets/Cube.001.mesh
 - Assets/Shader/HDRP_Lit.shader
+- Assets/Assets/Cube.003.mesh
 - Assets/AnimationClip/Armature_docilesit.anim
-- Assets/Assets/ShyGuyPainting1.prefab
-- Assets/Assets/ShyGuyDef.asset
+- Assets/Assets/Cube.mesh
 - Assets/AudioClip/killplayer.ogg
 - Assets/Material/shyguyMaterialBloody.mat
 - Assets/tsg_placeholder.asset
+- Assets/Assets/ShyGuyDef.asset
 - Assets/Texture2D/tsg_finaldiff_test.png
 - Assets/Assets/ShyGuyTerminalLore.asset
 - Assets/AnimationClip/Armature_rageidle.anim
 - Assets/AudioClip/Shyguy_Successfulattack.ogg
 - Assets/AnimationClip/Armature_docilesit_action.anim
 - Assets/AnimationClip/Armature_killplayer.anim
+- Assets/Assets/096painting1.mat
 - Assets/AudioClip/old096cbcry.ogg
 - Assets/AudioClip/panic.ogg
 - Assets/AnimationClip/Armature_docileidle_to_sit.anim
@@ -130,11 +140,13 @@ Assets:
 - Assets/Material/MapDotRed.mat
 - Assets/Assets/ShyGuyKeyword.asset
 - Assets/AnimationClip/Armature_docilewalk.anim
-- Assets/AnimationClip/Armature_ref.anim
+- Assets/Assets/096painting1.jpg
 - Assets/Material/testTriggerRed.mat
+- Assets/AnimationClip/Armature_ref.anim
 - Assets/AudioMixerController/Diagetic.mixer
 - Assets/Material/shyguyMaterial.mat
 - Assets/AnimationClip/Armature_killplayer_todocile.anim
+- Assets/Assets/Untitled.fbx
 - Assets/AnimationClip/Armature_placeholderrage.anim
 - Assets/AnimationClip/Armature_vententer.anim
 - Assets/AudioClip/old096cbchase.ogg
@@ -148,6 +160,7 @@ Assets:
 - Assets/AudioClip/old096cbtrigger.ogg
 - Assets/AudioClip/docileidlesit.ogg
 - Assets/AudioClip/ShipBreakInAlarm.ogg
+- Assets/Assets/Plane.mesh
 - Assets/Assets/ShyGuyPainting1.asset
 - Assets/Assets/ShyGuyDefLore.asset
 - Assets/AnimationClip/Armature_angeredrun_close.anim

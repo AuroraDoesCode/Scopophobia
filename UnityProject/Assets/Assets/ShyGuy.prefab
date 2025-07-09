@@ -1856,7 +1856,7 @@ MonoBehaviour:
   creatureAnimator: {fileID: 95760043015646158}
   creatureVoice: {fileID: 82286839826629247}
   creatureSFX: {fileID: 82711277904658589}
-  eye: {fileID: 0}
+  eye: {fileID: 4441780023246982}
   dieSFX: {fileID: 8300000, guid: 25831bb01dace1c4cb4d216dbc071b0c, type: 3}
   enemyBehaviourStates:
   - name: Roaming

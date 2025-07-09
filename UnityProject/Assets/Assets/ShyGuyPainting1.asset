@@ -31,7 +31,7 @@ MonoBehaviour:
   highestSalePercentage: 80
   maxValue: 350
   minValue: 125
-  spawnPrefab: {fileID: 7942506575891395787, guid: 49b79f827cc79d0439d2ac8767aff581,
+  spawnPrefab: {fileID: 8109140266398178542, guid: a30f47cd9aa31a543a449e2ee97578fb,
     type: 3}
   requiresBattery: 0
   batteryUsage: 15
@@ -43,7 +43,7 @@ MonoBehaviour:
   throwAnim: 
   grabAnimationTime: 0
   grabSFX: {fileID: 8300000, guid: ed646c209f3750744bf1cb7532c02649, type: 3}
-  dropSFX: {fileID: 0}
+  dropSFX: {fileID: 8300000, guid: c419c650a028f9d438b2b1915f10c9b0, type: 3}
   pocketSFX: {fileID: 0}
   throwSFX: {fileID: 0}
   syncGrabFunction: 1
