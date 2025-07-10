@@ -38,7 +38,7 @@ namespace Scopophobia
                 return;
             }
 
-            EnemyHelper.SetProbabilityCurve(EnemyName, Utils.ToFloatsArray(Scopophobia.Config.SpawnProbabilityCurve));
+            EnemyHelper.SetProbabilityCurve(EnemyName, Utils.ToFloatsArray(Config.SpawnProbabilityCurve));
 
             foreach (var level in StartOfRound.Instance.levels)
             {

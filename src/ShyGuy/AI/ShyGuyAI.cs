@@ -1,10 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.ExceptionServices;
 using GameNetcodeStuff;
+using PathfindingLib.Jobs;
+using PathfindingLib.Utilities;
 using Scopophobia;
+using Unity.Jobs.LowLevel.Unsafe;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
+using Zeekerss.Core.Singletons;
 
 namespace ShyGuy.AI
 {
@@ -12,17 +18,14 @@ namespace ShyGuy.AI
     {
         private Transform localPlayerCamera;
 
-        private Vector3 mainEntrancePosition;
-        private Vector3 FireExitPosition;
+        public Vector3 mainEntrancePosition;
 
         public Collider mainCollider;
 
         public VehicleController CompanyCruiser;
-
-        public static Vector3[] outsideNodePositions;
-        public static Vector3[] insideNodePositions;
         public bool pryingOpenDoor;
-
+        public bool pathingToTeleport;
+        public Vector3 closestTeleportPosition;
         public HangarShipDoor shipDoor;
 
         private float pryingDoorAnimTime;
@@ -79,9 +82,12 @@ namespace ShyGuy.AI
         public Material bloodyMaterial;
 
         public AISearchRoutine roamMap;
-
+        public static EntranceTeleport[] entranceTeleports;
+        public static List<EntranceTeleport> outsideTeleports = [];
+        public static List<EntranceTeleport> insideTeleports = [];
         public Transform shyGuyFace;
 
+        public EntranceTeleport closestTeleport;
 
         private Vector3 spawnPosition;
 
@@ -113,36 +119,16 @@ namespace ShyGuy.AI
 
         private float timeAtLastUsingEntrance;
 
-        private static GameObject[] _cachedAINodes;
-        private static GameObject[] _cachedOutsideAINodes;
-
         public static MineshaftElevatorController elevatorScript;
         public List<PlayerControllerB> SCP096Targets = new List<PlayerControllerB>();
 
-        public static GameObject[] GetAINodes(bool outside)
-        {
-            if (outside)
-            {
-                _cachedOutsideAINodes ??= GameObject.FindGameObjectsWithTag("OutsideAINode");
-                for (int i = 0; i < _cachedOutsideAINodes.Length; i++)
-                {
-                    outsideNodePositions[i] = _cachedOutsideAINodes[i].transform.position;
-                }
-                return _cachedOutsideAINodes;
-            }
-            _cachedAINodes ??= GameObject.FindGameObjectsWithTag("AINode");
-            for (int i = 0; i < _cachedAINodes.Length; i++)
-            {
-                insideNodePositions[i] = _cachedAINodes[i].transform.position;
-            }
-            return _cachedAINodes;
-        }
         public override void Start()
         {
             base.Start();
-            CompanyCruiser = UnityEngine.Object.FindObjectOfType<VehicleController>();
-            shipDoor = UnityEngine.Object.FindObjectOfType<HangarShipDoor>();
-            elevatorScript = UnityEngine.Object.FindObjectOfType<MineshaftElevatorController>();//Lets see if the Elevator Controls exist, I hope they do, we're on the mineshaft
+            if(CompanyCruiser == null) CompanyCruiser = UnityEngine.Object.FindObjectOfType<VehicleController>();
+            if(shipDoor == null) shipDoor = UnityEngine.Object.FindObjectOfType<HangarShipDoor>();
+            if (agent == null) agent = GetComponentInChildren<NavMeshAgent>();
+            if(elevatorScript == null) elevatorScript = UnityEngine.Object.FindObjectOfType<MineshaftElevatorController>();//Lets see if the Elevator Controls exist, I hope they do, we're on the mineshaft
             triggerDuration = Config.triggerTime;
             lastInterval = Time.realtimeSinceStartup;
             Transform leftEye = null;
@@ -227,7 +213,59 @@ namespace ShyGuy.AI
             isOutside = transform.position.y > -80f;
             mainEntrancePosition = RoundManager.Instance.GetNavMeshPosition(RoundManager.FindMainEntrancePosition(getTeleportPosition: true, isOutside));
             path1 = new NavMeshPath();
-            GetAINodes(isOutside);
+            //the Following Code is adapted on code from StarlancerAIFix. 
+            outsideTeleports.Clear();
+            insideTeleports.Clear(); 
+            entranceTeleports = UnityEngine.Object.FindObjectsByType<EntranceTeleport>(FindObjectsSortMode.None); //Load all Teleports
+            for (int i = 0; i < entranceTeleports.Length; i++)
+            {
+                int entranceID = entranceTeleports[i].entranceId;
+
+                if (entranceTeleports[i].isEntranceToBuilding)
+                {
+                    if (!entranceTeleports[i].FindExitPoint())
+                    {
+                        continue;
+                    }
+                    else if (entranceTeleports[i].entrancePoint == null)
+                    {
+                        continue;
+                    }
+
+                    outsideTeleports.Add(entranceTeleports[i]);
+                    outsideTeleports.Sort((entranceA, entranceB) => entranceA.entranceId.CompareTo(entranceB.entranceId));
+                }
+                else
+                {
+                    if (!entranceTeleports[i].FindExitPoint())
+                    {
+                        continue;
+                    }
+                    else if (entranceTeleports[i].entrancePoint == null)
+                    {
+                        continue;
+                    }
+
+                    insideTeleports.Add(entranceTeleports[i]);
+                    insideTeleports.Sort((entranceA, entranceB) => entranceA.entranceId.CompareTo(entranceB.entranceId));
+                }
+            }
+            //End Code from StarlancerAIFix
+            if (isOutside)
+            {
+                if (allAINodes == null || allAINodes.Length == 0)
+                {
+                    allAINodes = GameObject.FindGameObjectsWithTag("OutsideAINode");
+                }
+                if (GameNetworkManager.Instance.localPlayerController != null)
+                {
+                    EnableEnemyMesh(!StartOfRound.Instance.hangarDoorsClosed || !GameNetworkManager.Instance.localPlayerController.isInHangarShipRoom);
+                }
+            }
+            else if (allAINodes == null || allAINodes.Length == 0)
+            {
+                allAINodes = GameObject.FindGameObjectsWithTag("AINode");
+            }
             openDoorSpeedMultiplier = 450f;
             SetShyGuyInitialValues();
         }
@@ -324,7 +362,7 @@ namespace ShyGuy.AI
                 case 2:
                     {
                         agent.stoppingDistance = 0f;
-                        agent.avoidancePriority = 60;
+                        agent.avoidancePriority = 99;
                         openDoorSpeedMultiplier = 450f;
                         mainCollider.isTrigger = true;
                         addPlayerVelocityToDestination = 1f;
@@ -378,10 +416,9 @@ namespace ShyGuy.AI
                             {
                                 ChangeOwnershipOfEnemy(targetPlayer.actualClientId);
                             }
-                            if (!isOutside && RoundManager.Instance.dungeonGenerator.Generator.DungeonFlow.name == "Level3Flow")//Checks if Shy guy is Outside, and if the Elevator Exists in the level.
-                            {
+                            if (!isOutside && RoundManager.Instance.dungeonGenerator.Generator.DungeonFlow.name == "Level3Flow" && (Vector3.Distance(transform.position, elevatorScript.elevatorTopPoint.transform.position) < 3f || Vector3.Distance(base.transform.position, elevatorScript.elevatorBottomPoint.transform.position) < 3f))//Checks if Shy guy is Outside, and if the Elevator Exists in the level.
+                            {//if we're at the elevator, we should try to use it.
                                 TryUsingElevator();
-                                return;
                             }
                             if (isOutside && targetPlayer.isInHangarShipRoom && !pryingOpenDoor)
                             {
@@ -389,22 +426,24 @@ namespace ShyGuy.AI
                                     break;
                             }
                             if (targetPlayer.isInsideFactory != !isOutside)
-                            {//Is Target inside or outside?
-                                if (Vector3.Distance(transform.position, mainEntrancePosition) < 2f)//am I at the door?
+                            {//new code. if not already pathing, lets find closest teleport. Then move to it if not right there. Else, continue as normal.
+                                if (!pathingToTeleport) { GetClosestTeleportAndMove(); }
+
+                                if (Vector3.Distance(transform.position, closestTeleportPosition) < 2f)
                                 {
-                                    TeleportEnemy(RoundManager.FindMainEntrancePosition(getTeleportPosition: true, !isOutside), !isOutside);
+                                    TeleportEnemy(closestTeleportPosition, !isOutside);
                                     agent.speed = 0f;
                                     return;
                                 }
-                                else//Im not at the door, but lets move towards it since im in the wrong place.
+                                else
                                 {
                                     movingTowardsTargetPlayer = false;
-                                    SetDestinationToPosition(mainEntrancePosition);
+                                    SetDestinationToPosition(closestTeleportPosition);
                                 }
                             }
                             else//Player in sights, continuing attack strategy
                             {
-                                if (PathIsIntersectedByLineOfSight(RoundManager.Instance.GetNavMeshPosition(targetPlayer.transform.position, RoundManager.Instance.navHit, 1.4f, agent.areaMask), false, false, false))
+                                if (PathIsIntersectedByLineOfSight(RoundManager.Instance.GetNavMeshPosition(targetPlayer.transform.position, RoundManager.Instance.navHit, 1.4f, agent.areaMask)))
                                 {
                                     SetMovingTowardsTargetPlayer(targetPlayer);//we do this so we can head straight for the target position via navmesh
                                 }
@@ -426,32 +465,78 @@ namespace ShyGuy.AI
             }
         }
 
+        public void GetClosestTeleportAndMove()
+        {
+            if (!pathingToTeleport && isOutside)
+            {
+                foreach (EntranceTeleport tele in outsideTeleports)
+                {
+                    if (Vector3.Distance(transform.position, tele.entrancePoint.transform.position) < Vector3.Distance(transform.position, mainEntrancePosition))
+                    {
+                        ScopophobiaPlugin.logger.LogInfo("Going to closest Exit");
+                        closestTeleport = tele;
+                        closestTeleportPosition = tele.entrancePoint.transform.position;
+                        pathingToTeleport = true;
+                    }
+                    else if (tele.isEntranceToBuilding)
+                    {
+                        ScopophobiaPlugin.logger.LogInfo("Cant Find Teleport, just using Main");
+                        closestTeleport = tele;
+                        closestTeleportPosition = tele.entrancePoint.transform.position;
+                        pathingToTeleport = true;
+                    }
+                }
+            }
+            else if (!pathingToTeleport && !isOutside)
+            {
+                foreach (EntranceTeleport tele in insideTeleports)
+                {
+                    if (Vector3.Distance(transform.position, tele.entrancePoint.transform.position) < Vector3.Distance(transform.position, mainEntrancePosition))
+                    {
+                        ScopophobiaPlugin.logger.LogInfo("Going to closest Exit");
+                        closestTeleport = tele;
+                        closestTeleportPosition = tele.entrancePoint.transform.position;
+                        pathingToTeleport = true;
+                    }
+                    else if (tele.isEntranceToBuilding)
+                    {
+                        ScopophobiaPlugin.logger.LogInfo("Cant Find Teleport, just using Main");
+                        closestTeleport = tele;
+                        closestTeleportPosition = tele.entrancePoint.transform.position;
+                        pathingToTeleport = true;
+                    }
+                }
+            }
+        }
+        
         public void TryUsingElevator()
         {
-            if (!isOutside && elevatorScript != null && isInElevatorStartRoom)
+            if (isInElevatorStartRoom)
             {
                 if (Vector3.Distance(transform.position, elevatorScript.elevatorBottomPoint.position) < 3f)//Check distance from Bottom Button
                 {
                     isInElevatorStartRoom = false;
                 }
             }
-            else if (!isOutside && elevatorScript != null && Vector3.Distance(transform.position, elevatorScript.elevatorTopPoint.position) < 3f)//Another Distance check, this time for Top Button.
+            else if (Vector3.Distance(transform.position, elevatorScript.elevatorTopPoint.position) < 3f)//Another Distance check, this time for Top Button.
             {
                 isInElevatorStartRoom = true;
             }
-            if (!isOutside && elevatorScript != null && !isInElevatorStartRoom)//if not in the Elevator Start Room, Need to call the Elevator
+            if (!isInElevatorStartRoom)//if not in the Elevator Start Room, Need to call the Elevator
             {
                 UseElevator(true);
+                return;
             }
-            else if (!isOutside && elevatorScript != null && !targetPlayer.isPlayerDead && targetPlayer.isPlayerControlled && targetPlayer.isInsideFactory && Vector3.Distance(targetPlayer.transform.position, elevatorScript.elevatorTopPoint.position) > 50f)//Is the player Inside, or hiding, Lets Distance check them from the Top Point
+            else if (!targetPlayer.isPlayerDead && targetPlayer.isPlayerControlled && targetPlayer.isInsideFactory && Vector3.Distance(targetPlayer.transform.position, elevatorScript.elevatorTopPoint.position) > 50f)//Is the player Inside, or hiding, Lets Distance check them from the Top Point
             {
                 UseElevator(false);//Player is actually inside, Probably a fire exit. Lets go back down
+                return;
 
             }
         }
         public void TeleportEnemy(Vector3 pos, bool setOutside)
         {
-            Vector3 navMeshPosition = RoundManager.Instance.GetNavMeshPosition(pos);
+            Vector3 navMeshPosition = RoundManager.Instance.GetNavMeshPosition(outsideTeleports[closestTeleport.entranceId].entrancePoint.transform.position);
             if (IsOwner)
             {
                 agent.enabled = false;
@@ -464,11 +549,11 @@ namespace ShyGuy.AI
             }
             serverPosition = navMeshPosition;
             SetEnemyOutside(setOutside);
-            EntranceTeleport entranceTeleport = RoundManager.FindMainEntranceScript(setOutside);
-            if (entranceTeleport.doorAudios != null && entranceTeleport.doorAudios.Length != 0)
+            pathingToTeleport = false;
+            if (closestTeleport.doorAudios != null && closestTeleport.doorAudios.Length != 0)
             {
-                entranceTeleport.entrancePointAudio.PlayOneShot(entranceTeleport.doorAudios[0]);
-                WalkieTalkie.TransmitOneShotAudio(entranceTeleport.entrancePointAudio, entranceTeleport.doorAudios[0]);
+                closestTeleport.entrancePointAudio.PlayOneShot(closestTeleport.doorAudios[0]);
+                WalkieTalkie.TransmitOneShotAudio(closestTeleport.entrancePointAudio, closestTeleport.doorAudios[0]);
             }
         }
         private bool UseElevator(bool goUp)
@@ -637,14 +722,8 @@ namespace ShyGuy.AI
         {
             isOutside = outside;
             mainEntrancePosition = RoundManager.Instance.GetNavMeshPosition(RoundManager.FindMainEntrancePosition(getTeleportPosition: true, outside));
-            if (outside)
-            {
-                allAINodes = _cachedOutsideAINodes;
-            }
-            else 
-            { 
-                allAINodes = _cachedAINodes;
-            }
+            if (!outside) allAINodes = GameObject.FindGameObjectsWithTag("OutsideAINode");
+            else allAINodes = GameObject.FindGameObjectsWithTag("AINode");
         }
 
         public override void OnCollideWithPlayer(Collider other)
@@ -845,7 +924,6 @@ namespace ShyGuy.AI
             agent.enabled = false;
             pryingOpenDoor = true;
             inSpecialAnimation = true;
-            base.transform.position = shipDoor.outsideDoorPoint.transform.position;
             creatureAnimator.SetBool("PryingOpenDoor", value: true);
             shipDoor.shipDoorsAnimator.SetBool("PryingOpenDoor", value: true);
             shipDoor.shipDoorsAnimator.SetFloat("pryOpenDoor", 0f);
@@ -874,7 +952,7 @@ namespace ShyGuy.AI
                 }
                 return true;
             }
-            if (StartOfRound.Instance.hangarDoorsClosed && StartOfRound.Instance.shipStrictInnerRoomBounds.bounds.Contains(destination) && Vector3.Distance(base.transform.position, shipDoor.outsideDoorPoint.position) < 4f)
+            if (StartOfRound.Instance.hangarDoorsClosed && StartOfRound.Instance.shipStrictInnerRoomBounds.bounds.Contains(destination) && Vector3.Distance(base.transform.position, shipDoor.outsideDoorPoint.position) < 3f)//make this shorter to avoid the teleporting to door
             {
                 BeginPryOpenDoor();
                 return true;

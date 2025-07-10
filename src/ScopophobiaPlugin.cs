@@ -13,7 +13,7 @@ using UnityEngine.Rendering.HighDefinition;
 
 namespace Scopophobia
 {
-    [BepInPlugin("Scopophobia", "Scopophobia", "1.1.9")]
+    [BepInPlugin("Scopophobia", "Scopophobia", "1.2.0")]
     [BepInDependency(LethalConfigProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     public class ScopophobiaPlugin : BaseUnityPlugin
     {
@@ -55,7 +55,7 @@ namespace Scopophobia
         private void Awake()
         {
             if (Instance == null) Instance = this;
-            InitializeNetworkBehaviours();
+            NetcodePatchAwake();
             LoadAssets();
             logger = base.Logger;
             MyConfig = new Config(base.Config);
@@ -80,7 +80,7 @@ namespace Scopophobia
             harmony.PatchAll(typeof(StartOfRoundPatch));//credit Crit / Zehs
 
         }
-        private static void InitializeNetworkBehaviours()
+        private static void NetcodePatchAwake()
         {
             // See https://github.com/EvaisaDev/UnityNetcodePatcher?tab=readme-ov-file#preparing-mods-for-patching
             var types = Assembly.GetExecutingAssembly().GetTypes();
