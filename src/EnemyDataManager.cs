@@ -26,7 +26,7 @@ namespace Scopophobia
         {
             if (StartOfRound.Instance == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to initialize enemy data list. StartOfRound Instance is null. (EnemyName: {EnemyName})");
+                Plugin.logger.LogError($"Failed to initialize enemy data list. StartOfRound Instance is null. (EnemyName: {EnemyName})");
                 return;
             }
 
@@ -34,7 +34,7 @@ namespace Scopophobia
 
             if (enemyType == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to initialize enemy data list. EnemyType is null. (EnemyName: {EnemyName})");
+                Plugin.logger.LogError($"Failed to initialize enemy data list. EnemyType is null. (EnemyName: {EnemyName})");
                 return;
             }
 
@@ -75,7 +75,7 @@ namespace Scopophobia
         {
             if (HasEnemyData(level.PlanetName))
             {
-                ScopophobiaPlugin.logger.LogWarning($"Failed to add enemy data for level \"{level.PlanetName}\". Enemy data already exists for SelectableLevel.");
+                Plugin.logger.LogWarning($"Failed to add enemy data for level \"{level.PlanetName}\". Enemy data already exists for SelectableLevel.");
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace Scopophobia
 
             if (enemyType == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to add enemy data for level \"{level.PlanetName}\". EnemyType is null");
+                Plugin.logger.LogError($"Failed to add enemy data for level \"{level.PlanetName}\". EnemyType is null");
                 return;
             }
 
@@ -137,7 +137,7 @@ namespace Scopophobia
 
             if (enemyData == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to set enemy data for current level. EnemyData is null. (PlanetName: {LevelHelper.CurrentPlanetName})");
+                Plugin.logger.LogError($"Failed to set enemy data for current level. EnemyData is null. (PlanetName: {LevelHelper.CurrentPlanetName})");
                 return;
             }
 

@@ -476,8 +476,8 @@ namespace ShyGuy.AI
                     {
                         if (Vector3.Distance(transform.position, tele.entrancePoint.transform.position) < Vector3.Distance(transform.position, mainEntrancePosition))
                         {
-                            ScopophobiaPlugin.logger.LogInfo("Path Completed");
-                            ScopophobiaPlugin.logger.LogInfo("Going to closest Exit");
+                            //ScopophobiaPlugin.logger.LogInfo("Path Completed");
+                            //ScopophobiaPlugin.logger.LogInfo("Going to closest Fire Exit");
                             closestTeleport = tele;
                             closestTeleportPosition = tele.entrancePoint.transform.position;
                             pathingToTeleport = true;
@@ -486,7 +486,7 @@ namespace ShyGuy.AI
                     
                         else if (tele.isEntranceToBuilding)
                         {
-                            ScopophobiaPlugin.logger.LogInfo("Cant Find Teleport, just using Main");
+                            //ScopophobiaPlugin.logger.LogInfo("Fire Exit is too far, just using Main");
                             closestTeleport = tele;
                             closestTeleportPosition = tele.entrancePoint.transform.position;
                             pathingToTeleport = true;
@@ -501,10 +501,10 @@ namespace ShyGuy.AI
                 {
                     if (agent.CalculatePath(tele.entrancePoint.transform.position, PathToTele) && PathToTele.status == NavMeshPathStatus.PathComplete)//if path fails, this might take a while. shouldn't be an issue however.
                     {
-                        ScopophobiaPlugin.logger.LogInfo("Path Completed");
+                        //ScopophobiaPlugin.logger.LogInfo("Path Completed");
                         if (Vector3.Distance(transform.position, tele.entrancePoint.transform.position) < Vector3.Distance(transform.position, mainEntrancePosition))
                         {
-                            ScopophobiaPlugin.logger.LogInfo("Going to closest Exit");
+                            //ScopophobiaPlugin.logger.LogInfo("Going to closest Fire Exit");
                             closestTeleport = tele;
                             closestTeleportPosition = tele.entrancePoint.transform.position;
                             pathingToTeleport = true;
@@ -512,7 +512,7 @@ namespace ShyGuy.AI
                         }
                         else if (tele.isEntranceToBuilding)
                         {
-                            ScopophobiaPlugin.logger.LogInfo("Cant Find Teleport, just using Main");
+                            //ScopophobiaPlugin.logger.LogInfo("Cant Find Teleport, just using Main");
                             closestTeleport = tele;
                             closestTeleportPosition = tele.entrancePoint.transform.position;
                             pathingToTeleport = true;
@@ -521,7 +521,9 @@ namespace ShyGuy.AI
                     }
                 }
             }
-            else { ScopophobiaPlugin.logger.LogInfo("Error: Shy Guy is unable to escape the interior"); }
+            else {
+                    //ScopophobiaPlugin.logger.LogInfo("Error: Shy Guy is unable to escape the interior");
+                   }
         }
         
         public void TryUsingElevator()
@@ -691,7 +693,6 @@ namespace ShyGuy.AI
                         creatureVoice.Stop();
                         PlayAudioFxServerRpc(2);
                         agent.speed = 0f;
-
                         triggerTime = triggerDuration;
                     }
                     triggerTime -= Time.deltaTime;

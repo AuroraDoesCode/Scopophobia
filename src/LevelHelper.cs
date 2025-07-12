@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LethalLib;
+using System.Collections.Generic;
 
 namespace Scopophobia
 {
@@ -10,7 +11,7 @@ namespace Scopophobia
             {
                 if (StartOfRound.Instance == null)
                 {
-                    ScopophobiaPlugin.logger.LogError("Failed to get current planet name. StartOfRound Instance is null.");
+                    Plugin.logger.LogError("Failed to get current planet name. StartOfRound Instance is null.");
                     return string.Empty;
                 }
 
@@ -37,7 +38,7 @@ namespace Scopophobia
         {
             if (StartOfRound.Instance == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to check is current level. StartOfRound Instance is null. (PlanetName: {planetName})");
+                Plugin.logger.LogError($"Failed to check is current level. StartOfRound Instance is null. (PlanetName: {planetName})");
                 return false;
             }
 
@@ -48,7 +49,7 @@ namespace Scopophobia
         {
             if (level == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to get enemy list. SelectableLevel is null. (EnemyListType: {Utils.GetEnumName(enemyListType)})");
+                Plugin.logger.LogError($"Failed to get enemy list. SelectableLevel is null. (EnemyListType: {Utils.GetEnumName(enemyListType)})");
                 return [];
             }
 
@@ -74,7 +75,7 @@ namespace Scopophobia
 
             if (level == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to check if level has enemy. SelectableLevel is null. (PlanetName: {planetName}, EnemyName: {enemyName}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
+                Plugin.logger.LogError($"Failed to check if level has enemy. SelectableLevel is null. (PlanetName: {planetName}, EnemyName: {enemyName}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
                 return false;
             }
 
@@ -82,7 +83,7 @@ namespace Scopophobia
 
             if (enemyType == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to check if level has enemy. EnemyType is null. (PlanetName: {planetName}, EnemyName: {enemyName}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
+                Plugin.logger.LogError($"Failed to check if level has enemy. EnemyType is null. (PlanetName: {planetName}, EnemyName: {enemyName}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
                 return false;
             }
 
@@ -112,7 +113,7 @@ namespace Scopophobia
 
             if (level == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to add enemy to level. SelectableLevel is null. (PlanetName: {planetName}, EnemyName: {enemyName}, SpawnWeight: {spawnWeight}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
+                Plugin.logger.LogError($"Failed to add enemy to level. SelectableLevel is null. (PlanetName: {planetName}, EnemyName: {enemyName}, SpawnWeight: {spawnWeight}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
                 return;
             }
 
@@ -120,7 +121,7 @@ namespace Scopophobia
 
             if (enemyType == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to add enemy to level. EnemyType is null. (PlanetName: {planetName}, EnemyName: {enemyName}, SpawnWeight: {spawnWeight}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
+                Plugin.logger.LogError($"Failed to add enemy to level. EnemyType is null. (PlanetName: {planetName}, EnemyName: {enemyName}, SpawnWeight: {spawnWeight}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
                 return;
             }
 
@@ -149,7 +150,7 @@ namespace Scopophobia
 
             if (level == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to remove enemy from level. SelectableLevel is null. (PlanetName: {planetName}, EnemyName: {enemyName}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
+                Plugin.logger.LogError($"Failed to remove enemy from level. SelectableLevel is null. (PlanetName: {planetName}, EnemyName: {enemyName}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
                 return;
             }
 
@@ -157,7 +158,7 @@ namespace Scopophobia
 
             if (enemyType == null)
             {
-                ScopophobiaPlugin.logger.LogError($"Failed to remove enemy from level. EnemyType is null. (PlanetName: {planetName}, EnemyName: {enemyName}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
+                Plugin.logger.LogError($"Failed to remove enemy from level. EnemyType is null. (PlanetName: {planetName}, EnemyName: {enemyName}, EnemyListType: {Utils.GetEnumName(enemyListType)})");
                 return;
             }
 
