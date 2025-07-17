@@ -458,7 +458,6 @@ namespace ShyGuy.AI
                     break;
             }
         }
-
         public void GetClosestTeleportAndMove()
         {
             NavMeshPath PathToTele = new();

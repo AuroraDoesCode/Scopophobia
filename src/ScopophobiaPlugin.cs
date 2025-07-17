@@ -1,5 +1,4 @@
 ﻿using System;
-using Scopophobia.Dice;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
@@ -14,9 +13,8 @@ using BepInEx.Bootstrap;
 
 namespace Scopophobia
 {
-    [BepInPlugin("Scopophobia", "Scopophobia", "1.2.2.1")]
+    [BepInPlugin("Scopophobia", "Scopophobia", "1.2.5")]
     [BepInDependency(LethalConfigProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("Theronguard.EmergencyDice", BepInDependency.DependencyFlags.SoftDependency)]
     public class ScopophobiaPlugin : BaseUnityPlugin
     {
         private readonly Harmony harmony = new Harmony("Scopophobia");
@@ -83,20 +81,7 @@ namespace Scopophobia
             harmony.PatchAll(typeof(AudioSpatializerDisabler));//disable annoying audiospacializer issue globally
             harmony.PatchAll(typeof(RoundManagerPatch));//credit Crit / Zehs
             harmony.PatchAll(typeof(StartOfRoundPatch));//credit Crit / Zehs
-            SetupDiceEffects();
 
-        }
-
-        public void SetupDiceEffects()
-        {
-            foreach (var plugin in Chainloader.PluginInfos)
-            {
-                var metadata = plugin.Value.Metadata;
-                if (metadata.GUID.Equals("Theronguard.EmergencyDice"))
-                {
-                    MysteryDice.MysteryDice.RegisterNewEffect(new ShyGuySpawn(), false); Logger.LogInfo("Set up Shy Guy Dice Effect");
-                }
-            }
         }
         private static void NetcodePatchAwake()
         {

@@ -45,16 +45,16 @@ MonoBehaviour:
   dropSFX: {fileID: 8300000, guid: c9aef762d62665a4997930a6823fa1b5, type: 3}
   pocketSFX: {fileID: 0}
   throwSFX: {fileID: 0}
-  syncGrabFunction: 0
-  syncUseFunction: 0
-  syncDiscardFunction: 0
-  syncInteractLRFunction: 0
+  syncGrabFunction: 1
+  syncUseFunction: 1
+  syncDiscardFunction: 1
+  syncInteractLRFunction: 1
   saveItemVariable: 0
   isDefensiveWeapon: 0
   toolTips:
   - This painting seems... Dangerous.
   verticalOffset: 0
-  floorYOffset: 0
+  floorYOffset: 1
   allowDroppingAheadOfPlayer: 1
   restingRotation: {x: 0, y: 90, z: -90}
   rotationOffset: {x: -35.3, y: 84.2, z: 183.8}

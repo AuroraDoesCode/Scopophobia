@@ -5,6 +5,7 @@ using HarmonyLib;
 using LethalLib;
 using Unity.Collections;
 using Unity.Netcode;
+using UnityEngine.Bindings;
 
 namespace Scopophobia
 {
@@ -27,9 +28,12 @@ namespace Scopophobia
         public static ConfigEntry<bool> HasMaxTargetsConfig;
         public static ConfigEntry<int> MaxTargetsConfig;
         public static ConfigEntry<bool> CanExitFacilityConfig;
-        public static ConfigEntry<int> PaintingSpawnRateConfig;
         public ConfigEntry<string> SpawnProbabilityCurveConfig { get; private set; }
         public static ConfigEntry<float> ShyGuyPowerLevelConfig;
+        public static ConfigEntry<int> paintingSpawnRateConfig;
+        public static ConfigEntry<bool> hidePaintingNameConfig;
+        public static ConfigEntry<string> nameToUseForPaintingConfig;
+        public static ConfigEntry<int> ChanceOfShyGuyConfig;
         public static bool ExtendedLogging;
         public static bool appears;
 
@@ -69,7 +73,11 @@ namespace Scopophobia
         public static bool spawnOutsideHardPlanets;
 
         public static float ShyGuyPowerLevel;
+        
         public static int PaintingSpawnRate;
+        public static bool hidePaintingName;
+        public static string nameToUseForPainting;
+        public static int ChanceOfShyGuy;
 
         public Config(ConfigFile cfg)
         {
@@ -95,7 +103,9 @@ namespace Scopophobia
             CanExitFacilityConfig = Bind("Trigger Settings", "Can Exit Facility", defaultValue: true, requiresRestart: false, "Determines if the Shy Guy can exit the facility and into the outdoors (and vice versa) to attack its target.");
             SpawnProbabilityCurveConfig = Bind("Spawn Settings", "ProbabilityCurve", defaultValue: "1.0, 1.0, 1.0", requiresRestart: false, $"Determines how likely {EnemyDataManager.EnemyName} is to spawn throughout the day. Accepts an array of floats with each entry separated by a comma.");
             ShyGuyPowerLevelConfig = Bind("Spawn Settings", "Shy Guy Power Level", 3.0f, requiresRestart: false, "Default Power Level for the Shy Guy to take up per level. (Default: 3.0)");
-            PaintingSpawnRateConfig = Bind("Spawn Settings", "Shy Guy Painting Spawn Rarity", 35, requiresRestart: false, "Default Spawn Rarity for the ShyGuyPainting (Default:35)");
+            paintingSpawnRateConfig = Bind("Painting Spawn Settings", "Shy Guy Painting Spawn Rarity", 35, requiresRestart: false, "Default Spawn Rarity for the ShyGuyPainting (Default:35)");
+            hidePaintingNameConfig = Bind("Painting Spawn Settings", "Hide Painting Name before Interaction", true, requiresRestart: false, "Disguise the painting as a different Loot Item? (Default: True)");
+            nameToUseForPaintingConfig = Bind("Painting Spawn Settings", "Custom Painting Name", "Fancy Painting",requiresRestart: true, "Customise the Scannode name for the item on the map! (Default: Fancy Painting");
             appears = AppearsConfig.Value;
             ExtendedLogging = ExtendedLoggingConfig.Value;
             hasGlowingEyes = HasGlowingEyesConfig.Value;
@@ -113,7 +123,9 @@ namespace Scopophobia
             canExitFacility = CanExitFacilityConfig.Value;
             SpawnProbabilityCurve = SpawnProbabilityCurveConfig.Value;
             ShyGuyPowerLevel = ShyGuyPowerLevelConfig.Value;
-            PaintingSpawnRate = PaintingSpawnRateConfig.Value;
+            PaintingSpawnRate = paintingSpawnRateConfig.Value;
+            hidePaintingName = hidePaintingNameConfig.Value;
+            nameToUseForPainting = nameToUseForPaintingConfig.Value;
         }
 
         public static void RequestSync()

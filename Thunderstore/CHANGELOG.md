@@ -1,4 +1,17 @@
-# 1.2.2
+# 1 2.5
+## MORE PAINTING FIXES 
++ Fix Error caused by Painting Scrap
++ Fix Spawn mechanic with Painting
++ Hopefully stop breaking everything else along with this release
+# 1.2.4
+## Fixes again
++ Hopefully fix issues with paintings
+# 1.2.3
+## Painting Configs
++ Add Config options for The Shy Guy Painting. Customise the spawn in name, if the name is hidden at start, and upped the spawn rate a little.
++ Painting now works on random chance, if you happen to be above the threshold, something bad happens. if below, you're safe for the round. 
++ Fixed the Painting so it only triggers once per player
+ # 1.2.2
 ## Fix silly mistake
 - Fix mistake that meant shy guy would spawn on the company building when the painting was interacted with, oops. (I thought i'd already done this)
 # 1.2.1
@@ -13,8 +26,8 @@
 # 1.1.9
 ## AI Fixes (Again)
 + Fix broken AI when indoors (Thanks to both @Arterra & @SamBammers for the report)
-+ 1.1.8
-+ Asset Fixes
+# 1.1.8
+## Asset Fixes
 + Fix misdirected Sounds when players are Killed (Thanks Lunx)
 + Hopefully Fix MapRadar glitch happening to players
 # 1.1.7
