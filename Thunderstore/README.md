@@ -12,6 +12,9 @@ Scopopobia was originally created by [Jasper.Creations](https://thunderstore.io/
 - Configurable values and speeds.
 - Fully configurable spawn rates, allowing the Shy Guy to spawn outside on higher-level moons.
 - Will always track its targets down, and only its targets, **no matter what**.
+- Custom Break in Animation for the Ship [Added with v1.1.7]
+- Spawnable Painting scrap [Added with v1.2.0]
+- Can Escape via both the Fire Exit, or Main Entrance. [Added in v1.2.3]
 
 ![no matter what](https://i.imgur.com/BgdQZZ3.gif)
 
@@ -26,25 +29,18 @@ SCP-096 is normally extremely docile, with pressure sensors inside its cell indi
 
 Upon arriving at SCP-096-1's location, <mark>SCP-096 will proceed to kill and ████████████ SCP-096-1.</mark> 100% of cases have left no traces of SCP-096-1. SCP-096 will then sit down for several minutes before regaining its composure and becoming docile once again.
 
-# Please note
-This mod will most likely not receive future updates From myself due to personal situations in life, but others have taken up the call!
-
-You can check out my socials here:
-- Patreon: https://www.patreon.com/user?u=120548732
-- Twitter/X: https://twitter.com/jaspercreations
-- Roblox (my job): https://www.roblox.com/users/1418691708/profile
-
 # To-be-added
-- Ability to pry open hangar doors/ship doors. [Added with v1.1.7]
-- Ability to exit facility via fire exit. [Added in v1.2.0]
-- Ability to attack other enemies who've spotted its face.
+- Ability to attack other enemies who've spotted its face. [Enemy Support in Progress, currently testing.]
 - Support with DontBlink (unless it works already, not sure :p)
-- Compatability with camera mods to make the ship a little more unsafe.
-- Purchasable containment bag to neutralize the threat of the Shy Guy.
-- Sound pack to fit the sound design of *Lethal Company*.
+- Compatability with camera mods to make the ship a little more unsafe. [Compatibility with OpenBodycams Coming soon]
+- Purchasable containment bag to neutralize the threat of the Shy Guy. [May not be implemented, unsure yet. If it does, will take the form of an item that causes 096 to forget all his current targets, and go back to idle]
+- Sound pack to fit the sound design of *Lethal Company*. [Coming Soon]
 - Shy Guy purchasable picture frame. [Coming Soon]
-- Better animations for the Triggered stage.
+- Better animations for the Triggered stage. [New Animations in Progress]
 - whatever else i think of lol
+
+# Incompatibilities
+- Currently Incompatible with: EntranceTeleportOptimisations (Seems to break Escape mechanic currently)
 
 # Credits
 - [TheUnknownCod3r](https://thunderstore.io/c/lethal-company/p/theunknowncod3r/) For maintaining the mod past v49, and adding new features
@@ -56,3 +52,4 @@ You can check out my socials here:
 - Thanks to **Evaisa** for ***LethalLib*** and programming help
 - Thanks to **Heyimnoob** for programming help 
 - Thanks to **Number1Riker** for testing
+- Thanks to **@SamBanners, @Zeta, @Lunxara** for multiple bug reports, and testing on v70.

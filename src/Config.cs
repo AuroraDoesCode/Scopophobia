@@ -3,9 +3,12 @@ using BepInEx.Configuration;
 using GameNetcodeStuff;
 using HarmonyLib;
 using LethalLib;
+using Scopophobia.Dependencies;
 using Unity.Collections;
 using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.Bindings;
+using UnityEngine.UIElements;
 
 namespace Scopophobia
 {
@@ -17,7 +20,6 @@ namespace Scopophobia
         public static ConfigEntry<bool> HasGlowingEyesConfig;
         public static ConfigEntry<string> SoundPackConfig;
         public static ConfigEntry<bool> BloodyTextureConfig;
-        public static ConfigEntry<bool> DisableSpawnRatesConfig;
         public static ConfigEntry<bool> DeathMakesBloodyConfig;
         public static ConfigEntry<float> SpeedDocileMultiplierConfig;
         public static ConfigEntry<float> SpeedRageMultiplierConfig;
@@ -28,12 +30,13 @@ namespace Scopophobia
         public static ConfigEntry<bool> HasMaxTargetsConfig;
         public static ConfigEntry<int> MaxTargetsConfig;
         public static ConfigEntry<bool> CanExitFacilityConfig;
-        public ConfigEntry<string> SpawnProbabilityCurveConfig { get; private set; }
+        public static ConfigEntry<string> SpawnProbabilityCurveConfig;
         public static ConfigEntry<float> ShyGuyPowerLevelConfig;
         public static ConfigEntry<int> paintingSpawnRateConfig;
         public static ConfigEntry<bool> hidePaintingNameConfig;
         public static ConfigEntry<string> nameToUseForPaintingConfig;
         public static ConfigEntry<int> ChanceOfShyGuyConfig;
+        public static ConfigEntry<bool> TwitchIntegrationConfig;
         public static bool ExtendedLogging;
         public static bool appears;
 
@@ -71,6 +74,7 @@ namespace Scopophobia
         public static float endEnemySpawnCurve;
 
         public static bool spawnOutsideHardPlanets;
+        public static bool twitchIntegration;
 
         public static float ShyGuyPowerLevel;
         
@@ -79,13 +83,38 @@ namespace Scopophobia
         public static string nameToUseForPainting;
         public static int ChanceOfShyGuy;
 
+        public static void SetModIcon(Sprite sprite)
+        {
+            if (LethalConfigProxy.Enabled)
+            {
+                LethalConfigProxy.SetModIcon(sprite);
+            }
+        }
+
+        public static void SetModDescription(string description)
+        {
+            if (LethalConfigProxy.Enabled)
+            {
+                LethalConfigProxy.SetModDescription(description);
+            }
+        }
+
+        public static void SkipAutoGen()
+        {
+            if (LethalConfigProxy.Enabled)
+            {
+                LethalConfigProxy.SkipAutoGen();
+            }
+        }
         public Config(ConfigFile cfg)
         {
             InitInstance(this);
             BindConfigs(cfg);
+            SetupChangedEvents();
         }
         public void BindConfigs(ConfigFile cfg)
         {
+            SkipAutoGen();
             AppearsConfig = Bind("General", "Enable the Shy Guy", defaultValue: true, requiresRestart: true, "Allows the Shy Guy to spawn in-game.");//used in ScopophobiaPlugin
             ExtendedLoggingConfig = Bind("General", "Enable Extended Logging", defaultValue: false, requiresRestart: false, "Enables Error and Warning Logs [Developer]");//as above
             HasGlowingEyesConfig = Bind("Appearance", "Glowing Eyes", defaultValue: true, requiresRestart: false, "Gives the Shy Guy glowing eyes similar to the Bracken/Flowerman.");
@@ -103,9 +132,11 @@ namespace Scopophobia
             CanExitFacilityConfig = Bind("Trigger Settings", "Can Exit Facility", defaultValue: true, requiresRestart: false, "Determines if the Shy Guy can exit the facility and into the outdoors (and vice versa) to attack its target.");
             SpawnProbabilityCurveConfig = Bind("Spawn Settings", "ProbabilityCurve", defaultValue: "1.0, 1.0, 1.0", requiresRestart: false, $"Determines how likely {EnemyDataManager.EnemyName} is to spawn throughout the day. Accepts an array of floats with each entry separated by a comma.");
             ShyGuyPowerLevelConfig = Bind("Spawn Settings", "Shy Guy Power Level", 3.0f, requiresRestart: false, "Default Power Level for the Shy Guy to take up per level. (Default: 3.0)");
-            paintingSpawnRateConfig = Bind("Painting Spawn Settings", "Shy Guy Painting Spawn Rarity", 35, requiresRestart: false, "Default Spawn Rarity for the ShyGuyPainting (Default:35)");
-            hidePaintingNameConfig = Bind("Painting Spawn Settings", "Hide Painting Name before Interaction", true, requiresRestart: false, "Disguise the painting as a different Loot Item? (Default: True)");
+            paintingSpawnRateConfig = Bind("Painting Spawn Settings", "Shy Guy Painting Spawn Rarity", 5, requiresRestart: true, "Default Spawn Rarity for the ShyGuyPainting (Default: 5)");
+            hidePaintingNameConfig = Bind("Painting Spawn Settings", "Hide Painting Name before Interaction", true, requiresRestart: true, "Disguise the painting as a different Loot Item? (Default: True)");
             nameToUseForPaintingConfig = Bind("Painting Spawn Settings", "Custom Painting Name", "Fancy Painting",requiresRestart: true, "Customise the Scannode name for the item on the map! (Default: Fancy Painting");
+            ChanceOfShyGuyConfig = Bind("Painting Spawn Settings", "Spawn Chance", 35, requiresRestart: true, "Customise the spawn chance of shy guy spawning from the painting. Higher values mean more likely, lower values mean less likely. (Set to 100 for guaranteed spawns");
+            //TwitchIntegrationConfig = Bind("Twitch Settings", "Enable Twitch Integation", false, requiresRestart: true, "Enable Twitch Integration");
             appears = AppearsConfig.Value;
             ExtendedLogging = ExtendedLoggingConfig.Value;
             hasGlowingEyes = HasGlowingEyesConfig.Value;
@@ -126,8 +157,17 @@ namespace Scopophobia
             PaintingSpawnRate = paintingSpawnRateConfig.Value;
             hidePaintingName = hidePaintingNameConfig.Value;
             nameToUseForPainting = nameToUseForPaintingConfig.Value;
+            ChanceOfShyGuy = ChanceOfShyGuyConfig.Value;
+        }
+        private void SetupChangedEvents()
+        {
+            SpawnProbabilityCurveConfig.SettingChanged += SpawnProbabilityCurve_SettingChanged;
         }
 
+        private void SpawnProbabilityCurve_SettingChanged(object sender, System.EventArgs e)
+        {
+            EnemyHelper.SetProbabilityCurve(EnemyDataManager.EnemyName, Utils.ToFloatsArray(SpawnProbabilityCurveConfig.Value));
+        }
         public static void RequestSync()
         {
             if (!SyncedInstance<Config>.IsClient)
@@ -137,7 +177,6 @@ namespace Scopophobia
             using FastBufferWriter stream = new FastBufferWriter(SyncedInstance<Config>.IntSize, Allocator.Temp);
             SyncedInstance<Config>.MessageManager.SendNamedMessage("Scopophobia_OnRequestConfigSync", 0uL, stream);
         }
-
         public static void OnRequestSync(ulong clientId, FastBufferReader _)
         {
             if (!SyncedInstance<Config>.IsHost)
@@ -146,11 +185,12 @@ namespace Scopophobia
             }
             Plugin.logger.LogInfo($"Config sync request received from client: {clientId}");
             byte[] array = SyncedInstance<Config>.SerializeToBytes(SyncedInstance<Config>.Instance);
-            int value = array.Length;
-            using FastBufferWriter stream = new FastBufferWriter(value + SyncedInstance<Config>.IntSize, Allocator.Temp);
+            int value = array.Length; 
+            int fbwLength = FastBufferWriter.GetWriteSize(array) + IntSize;
+            using FastBufferWriter stream = new FastBufferWriter(fbwLength, Allocator.Temp);
             try
             {
-                stream.WriteValueSafe(in value, default(FastBufferWriter.ForPrimitives));
+                stream.WriteValueSafe(in value, default);
                 stream.WriteBytesSafe(array);
                 SyncedInstance<Config>.MessageManager.SendNamedMessage("Scopophobia_OnReceiveConfigSync", clientId, stream);
             }
@@ -194,14 +234,14 @@ namespace Scopophobia
                 Plugin.logger.LogError("Config sync error: Could not begin reading buffer.");
                 return;
             }
-            reader.ReadValueSafe(out int val, default(FastBufferWriter.ForPrimitives));
-            if (!reader.TryBeginRead(val))
+            reader.ReadValueSafe(out int length, default);
+            if (!reader.TryBeginRead(length))
             {
                 Plugin.logger.LogError("Config sync error: Host could not sync.");
                 return;
             }
-            byte[] data = new byte[val];
-            reader.ReadBytesSafe(ref data, val);
+            byte[] data = new byte[length];
+            reader.ReadBytesSafe(ref data, length);
             SyncedInstance<Config>.SyncInstance(data);
             Plugin.logger.LogInfo("Successfully synced config with host.");
         }

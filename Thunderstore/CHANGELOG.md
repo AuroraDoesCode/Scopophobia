@@ -1,3 +1,13 @@
+# 1.2.7
+## Navigation Fixes
++ Fix a revert in navigation (Fixes Wesley Moons) (Thanks @SamBammers, @Lunxara)
++ Fix mistake in Escape mechanic that caused navigation to fail occasionally on certain moons.
++ Fix Wesleys Interiors escape mechanism, Might fix other broken interiors too.
++ Fix Painting interaction triggering more than once per player. (Thanks, @Zeta)
+# 1.2.6
+## Small fixes
++ Fix Redacted from happening at Oxyde, Galetry, and Gordion properly (Thanks, Xu).
++ Config option for Painting Chance (Lunxara Request)
 # 1 2.5
 ## MORE PAINTING FIXES 
 + Fix Error caused by Painting Scrap

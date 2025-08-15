@@ -13,7 +13,7 @@ using BepInEx.Bootstrap;
 
 namespace Scopophobia
 {
-    [BepInPlugin("Scopophobia", "Scopophobia", "1.2.5")]
+    [BepInPlugin("Scopophobia", "Scopophobia", "1.2.7")]
     [BepInDependency(LethalConfigProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     public class ScopophobiaPlugin : BaseUnityPlugin
     {
@@ -64,8 +64,6 @@ namespace Scopophobia
             {
                 return;
             }
-            base.Config.TryGetEntry("Values", "Spawn Rarity", out ConfigEntry<int> spawnWeight);
-            int useWeight = spawnWeight?.Value ?? 15;
             ShyGuyVolume = Scopophobia.Config.VolumeConfig.Value;
             shyGuy = Assets.LoadAsset<EnemyType>("ShyGuyDef.asset");
             TerminalNode val = Assets.LoadAsset<TerminalNode>("ShyGuyTerminal.asset");
@@ -74,7 +72,7 @@ namespace Scopophobia
             NetworkPrefabs.RegisterNetworkPrefab(shyGuy.enemyPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(Paint1.spawnPrefab);
             Items.RegisterScrap(Paint1, Scopophobia.Config.PaintingSpawnRate, Levels.LevelTypes.All);
-            Enemies.RegisterEnemy(shyGuy, useWeight, Levels.LevelTypes.All, Enemies.SpawnType.Default, val, val2);
+            Enemies.RegisterEnemy(shyGuy, 15, Levels.LevelTypes.All, Enemies.SpawnType.Default, val, val2);
             logger.LogInfo("Scopophobia | SCP-096 has entered the facility. All remaining personnel proceed with caution.");
             harmony.PatchAll(typeof(Plugin));
             harmony.PatchAll(typeof(GetShyGuyPrefabForLaterUse));
@@ -106,6 +104,13 @@ namespace Scopophobia
             if (Scopophobia.Config.ExtendedLogging)
             {
                 logger.LogInfo(data);
+            }
+        }
+        public void LogErrorExtended(object data)
+        {
+            if (Scopophobia.Config.ExtendedLogging)
+            {
+                logger.LogError(data);
             }
         }
 

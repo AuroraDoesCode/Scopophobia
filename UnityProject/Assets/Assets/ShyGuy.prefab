@@ -1844,19 +1844,19 @@ NavMeshAgent:
   m_GameObject: {fileID: 1780939369593880}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 1
+  m_Radius: 0.9
   m_Speed: 6
   m_Acceleration: 80
-  avoidancePriority: 50
+  avoidancePriority: 99
   m_AngularSpeed: 420
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0
   m_AutoRepath: 1
-  m_Height: 4
+  m_Height: 3.5
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 3
+  m_ObstacleAvoidanceType: 4
 --- !u!82 &82711277904658589
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2160,6 +2160,7 @@ MonoBehaviour:
     onlySearchNodesInLOS: 0
   shyGuyFace: {fileID: 4441780023246982}
   closestTeleport: {fileID: 0}
+  triggerDuration: 66.4
   SCP096Targets: []
 --- !u!1 &1784991936493905
 GameObject:
