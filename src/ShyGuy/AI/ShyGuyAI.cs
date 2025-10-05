@@ -389,13 +389,12 @@ namespace ShyGuy.AI
                             break;
                         }
                         PlayerControllerB oldTargetPlayer = targetPlayer;
-                        float closestDist = 0f;
+                        float closestDist = float.PositiveInfinity;
 
                         for (int i = SCP096Targets.Count - 1; i >= 0; i--)
                         {
                             PlayerControllerB hunted = SCP096Targets[i];
 
-                            if (hunted == null) { SCP096Targets.RemoveAt(i); ScopophobiaPlugin.Instance.LogInfoExtended($"Hunted Is Null."); continue; }
                             bool sameArea = hunted.isInsideFactory == !isOutside;
                             bool allowedToLeave = true;
                             if (!Config.canExitFacility && !sameArea)
@@ -406,7 +405,7 @@ namespace ShyGuy.AI
                             {
                                 float distance = Vector3.Distance(hunted.transform.position, transform.position);
 
-                                if (!hunted.isPlayerDead && hunted.isPlayerControlled && hunted.inAnimationWithEnemy == null && hunted.sinkingValue < 0.73f && distance < float.PositiveInfinity)//manually check if player is targetable, as it blocks if players are in the ship
+                                if (!hunted.isPlayerDead && hunted.isPlayerControlled && hunted.inAnimationWithEnemy == null && hunted.sinkingValue < 0.73f && distance < closestDist)//manually check if player is targetable, as it blocks if players are in the ship
                                 {
                                     closestDist = Vector3.Magnitude(hunted.transform.position - transform.position);
                                     targetPlayer = hunted;
@@ -415,13 +414,12 @@ namespace ShyGuy.AI
                             }
                             else
                             {
-                                ScopophobiaPlugin.Instance.LogInfoExtended($"Removing {hunted.playerClientId} from the Array");
+                                ScopophobiaPlugin.Instance.LogInfoExtended($"Removing {hunted.actualClientId} from the Array");
                                 AddTargetToList((int)hunted.actualClientId, remove: true);
                             }
                         }
                         if (targetPlayer != null)
                         {
-                            if (targetPlayer.isPlayerDead) { AddTargetToList((int)targetPlayer.actualClientId, true); }
                             creatureAnimator.SetFloat("DistanceToTarget", Vector3.Distance(transform.position, targetPlayer.transform.position));
                             if (roamMap.inProgress)
                             {
@@ -447,19 +445,20 @@ namespace ShyGuy.AI
                                 if (Vector3.Distance(transform.position, closestTeleport.entrancePoint.position) < 1f && pathingToTeleport)
                                 {
                                     TeleAndRefreshEnemy(closestTeleport.exitPoint.position, !isOutside);
+                                    timeAtLastUsingEntrance =  Time.time;
                                     agent.speed = 0f;
                                     return;
                                 }
                                 else
                                 {
                                     movingTowardsTargetPlayer = false;
-                                    SetDestinationToPosition(closestTeleportPosition);
+                                    SetDestinationToPosition(closestTeleport.entrancePoint.position);
                                     ScopophobiaPlugin.Instance.LogInfoExtended($"{targetPlayer.name} is Not in area, looking for entranceteleport");
                                 }
                             }
                             else//Player in sights, continuing attack strategy
                             {
-                                if (PathIsIntersectedByLineOfSight(RoundManager.Instance.GetNavMeshPosition(targetPlayer.transform.position, default(NavMeshHit), 5f, -1), false, false, true))
+                                if (PathIsIntersectedByLineOfSight(RoundManager.Instance.GetNavMeshPosition(targetPlayer.transform.position, default(NavMeshHit), 5f, -1)))
                                 {
                                     SetMovingTowardsTargetPlayer(targetPlayer);
                                 }
@@ -503,12 +502,9 @@ namespace ShyGuy.AI
 
         public void TryUsingElevator()
         {
-            if (isInElevatorStartRoom)
+            if (Vector3.Distance(transform.position, elevatorScript.elevatorBottomPoint.position) < 3f)//Check distance from Bottom Button
             {
-                if (Vector3.Distance(transform.position, elevatorScript.elevatorBottomPoint.position) < 3f)//Check distance from Bottom Button
-                {
-                    isInElevatorStartRoom = false;
-                }
+                isInElevatorStartRoom = false;
             }
             else if (Vector3.Distance(transform.position, elevatorScript.elevatorTopPoint.position) < 3f)//Another Distance check, this time for Top Button.
             {
@@ -528,42 +524,25 @@ namespace ShyGuy.AI
         }
         public void TeleAndRefreshEnemy(Vector3 Pos, bool setOutside)
         {
-            Vector3 navMeshPos = RoundManager.Instance.GetNavMeshPosition(Pos, RoundManager.Instance.navHit, 5f, -1);
-            ScopophobiaPlugin.Instance.LogInfoExtended($"Trying to teleport enemy");
-            switch (setOutside)
+            Vector3 navMeshPosition = RoundManager.Instance.GetNavMeshPosition(Pos);
+            if (IsOwner)
             {
-                case false:
-                    if (insideTeleports == null) { ScopophobiaPlugin.Instance.LogErrorExtended($"Inside Teleports is Null. Aborting Teleport Attempt. Interior is {RoundManager.Instance.dungeonGenerator.Generator.DungeonFlow.name}, Report to Interior Developer"); return; }
-                    else if (closestTeleport == null) { ScopophobiaPlugin.Instance.LogErrorExtended($"Closest Teleport is Null. Aborting Teleport Attempt. Interior is {RoundManager.Instance.dungeonGenerator.Generator.DungeonFlow.name}. Please report this error to the author of this interior."); return; }
-                    else if (insideTeleports[closestTeleport.entranceId] == null) { ScopophobiaPlugin.Instance.LogErrorExtended($"insideTeleports[closestTeleport.entranceId].entrancePoint is null. Aborting Teleport Attempt. Interior is {RoundManager.Instance.dungeonGenerator.Generator.DungeonFlow.name}. Please Report to the Interior Author"); return; }
-                    else if (insideTeleports[closestTeleport.entranceId].entrancePoint.position == null) { ScopophobiaPlugin.Instance.LogErrorExtended($"insideTeleports[closestTeleport.entranceId].entrancePoint.position is null, aborting warp. Interior is {RoundManager.Instance.dungeonGenerator.Generator.DungeonFlow.name}. Please report this error to the author of this interior."); return; }
-                    ScopophobiaPlugin.Instance.LogInfoExtended($"Attempting to teleport"); 
-                    SetEnemyOutside(setOutside);
-                    agent.Warp(insideTeleports[closestTeleport.entranceId].entrancePoint.position);
-                    if (closestTeleport.doorAudios != null && closestTeleport.doorAudios.Length != 0)
-                    {
-                        closestTeleport.entrancePointAudio.PlayOneShot(closestTeleport.doorAudios[0]);
-                        WalkieTalkie.TransmitOneShotAudio(closestTeleport.entrancePointAudio, closestTeleport.doorAudios[0]);
-                    }
-                    pathingToTeleport = false;
-                    closestTeleport = null;
-                    break;
-                case true:
-                    if (outsideTeleports == null) { ScopophobiaPlugin.Instance.LogErrorExtended($"outside Teleports is Null. Aborting Teleport Attempt. Interior is {RoundManager.Instance.dungeonGenerator.Generator.DungeonFlow.name}, Report to Interior Developer"); return; }
-                    else if (closestTeleport == null) { ScopophobiaPlugin.Instance.LogErrorExtended($"Closest Teleport is Null. Aborting Teleport Attempt. Interior is {RoundManager.Instance.dungeonGenerator.Generator.DungeonFlow.name}. Please report this error to the author of this interior."); return; }
-                    else if (outsideTeleports[closestTeleport.entranceId] == null) { ScopophobiaPlugin.Instance.LogErrorExtended($"outsideTeleports[closestTeleport.entranceId].entrancePoint is null. Aborting Teleport Attempt. Interior is {RoundManager.Instance.dungeonGenerator.Generator.DungeonFlow.name}. Please Report to the Interior Author"); return; }
-                    else if (outsideTeleports[closestTeleport.entranceId].entrancePoint.position == null) { ScopophobiaPlugin.Instance.LogErrorExtended($"outsideTeleports[closestTeleport.entranceId].entrancePoint.position is null, aborting warp. Interior is {RoundManager.Instance.dungeonGenerator.Generator.DungeonFlow.name}. Please report this error to the author of this interior."); return; }
-                    ScopophobiaPlugin.Instance.LogInfoExtended($"Attempting to teleport");
-                    SetEnemyOutside(setOutside);
-                    agent.Warp(outsideTeleports[closestTeleport.entranceId].entrancePoint.position);
-                    if (closestTeleport.doorAudios != null && closestTeleport.doorAudios.Length != 0)
-                    {
-                        closestTeleport.entrancePointAudio.PlayOneShot(closestTeleport.doorAudios[0]);
-                        WalkieTalkie.TransmitOneShotAudio(closestTeleport.entrancePointAudio, closestTeleport.doorAudios[0]);
-                    }
-                    pathingToTeleport = false;
-                    closestTeleport = null;
-                    break;
+                agent.enabled = false;
+                transform.position = navMeshPosition;
+                agent.enabled = true;
+            }
+            else
+            {
+                transform.position = navMeshPosition;
+            }
+            serverPosition = navMeshPosition;
+            SetEnemyOutside(setOutside);
+            agent.Warp(Pos);//fix for Wesley Moons
+            pathingToTeleport = false;
+            if (closestTeleport.doorAudios != null && closestTeleport.doorAudios.Length != 0)
+            {
+                closestTeleport.entrancePointAudio.PlayOneShot(closestTeleport.doorAudios[0]);
+                WalkieTalkie.TransmitOneShotAudio(closestTeleport.entrancePointAudio, closestTeleport.doorAudios[0]);
             }
         }
         private bool UseElevator(bool goUp)
@@ -592,7 +571,7 @@ namespace ShyGuy.AI
         public override void Update()
         {
             var networkManager = GameNetworkManager.Instance;
-            if (isEnemyDead || networkManager == null)
+            if (isEnemyDead || GameNetworkManager.Instance == null)
                 return;
             CalculateAnimationSpeed();
             if (pryingOpenDoor && inSpecialAnimation)
@@ -627,8 +606,8 @@ namespace ShyGuy.AI
                     GameNetworkManager.Instance.localPlayerController.JumpToFearLevel(1.25f);
                     if (!Config.hasMaxTargets || SCP096Targets.Count < Config.maxTargets)
                     {
-                        ScopophobiaPlugin.Instance.LogInfoExtended($"Adding {GameNetworkManager.Instance.localPlayerController.actualClientId} To Targets. Has Seen Face: {canSeeFace}");
-                        AddTargetToList((int)GameNetworkManager.Instance.localPlayerController.actualClientId);
+                        ScopophobiaPlugin.Instance.LogInfoExtended($"Adding {GameNetworkManager.Instance.localPlayerController.playerClientId} To Targets. Has Seen Face: {canSeeFace}");
+                        AddTargetToList((int)GameNetworkManager.Instance.localPlayerController.playerClientId);
                     }
                     if (currentBehaviourStateIndex == 0)
                     {
@@ -722,7 +701,7 @@ namespace ShyGuy.AI
             base.Update();
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership =false)]
         public void PlayAudioFxServerRpc(int audioClipID)
         {
             PlayAudioFXClientRpc(audioClipID);
@@ -774,8 +753,8 @@ namespace ShyGuy.AI
                 if (playerControllerB != null && SCP096Targets.Contains(playerControllerB))//check player is target, to stop him murdering random players when aggro
                 {
                     inKillAnimation = true;
-                    StartCoroutine(killPlayerAnimation((int)playerControllerB.playerClientId));
-                    KillPlayerServerRpc((int)playerControllerB.playerClientId);
+                    StartCoroutine(killPlayerAnimation((int)playerControllerB.actualClientId));
+                    KillPlayerServerRpc((int)playerControllerB.actualClientId);
                 }
             }
         }
