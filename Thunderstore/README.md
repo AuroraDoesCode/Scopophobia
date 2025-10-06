@@ -1,7 +1,7 @@
 # Scopophobia
 ![Logo](https://i.imgur.com/LtRg5e7.png)
 Adds the ***Shy Guy*** (SCP-096) into Lethal Company.
-Fully Compatible up to v72 of Lethal Company!
+Fully Compatible up to v73 of Lethal Company!
 Scopopobia was originally created by [Jasper.Creations](https://thunderstore.io/c/lethal-company/p/jaspercreations/), Now maintained by TheUnknownCod3r!
 # Features
 - Fully custom enemy behavior and animation.
@@ -45,6 +45,7 @@ Upon arriving at SCP-096-1's location, <mark>SCP-096 will proceed to kill and â–
 # Credits
 - [TheUnknownCod3r](https://thunderstore.io/c/lethal-company/p/theunknowncod3r/) For maintaining the mod past v49, and adding new features
 - [Jasper.Creations](https://thunderstore.io/c/lethal-company/p/jaspercreations/) for creating the mod for lethal company in the first place.
+- [Mr3DAnimator](https://www.fiverr.com/mr3d_animator) Created the BreakIntoShip anim for Shy Guy. 
 - "SCP-096" by Dr Dan, from the SCP Wiki. Source: https://scpwiki.com/scp-096. Licensed under CC-BY-SA.
 - **Regalis** for creating **SCP: Containment Breach**.
 - **Omniary** and **FragdaddyXXL** for creating some sounds for **SCP: Containment Breach**.

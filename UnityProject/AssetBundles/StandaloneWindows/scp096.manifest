@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 3184991867
+CRC: 3858250888
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c22ce356e56cc655b289786f51635a85
+    Hash: a11a7570e77239be2782207a6638d8a4
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 961cc5f6ef4b88e5028f85e276f899e1
+    Hash: a411acf29e52058d600dec04ea92342d
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: c22ce356e56cc655b289786f51635a85
+    Hash: a11a7570e77239be2782207a6638d8a4
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -61,6 +61,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: e651dbb3fbac04af2b8f5abf007ddc23, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: d3cecf05b78b173605122a700874719c, type: 3}
 - Class: 115
   Script: {instanceID: 0}
@@ -95,6 +97,8 @@ SerializeReferenceClassIdentifiers:
   ClassName: EnemySize
 - AssemblyName: Assembly-CSharp
   ClassName: NavSizeLimit
+- AssemblyName: Unity.Netcode.Runtime
+  ClassName: Unity.Netcode.NetworkPrefab
 Assets:
 - Assets/AudioClip/scptriggered.ogg
 - Assets/AnimationClip/Armature_docilesit_to_idle.anim
@@ -148,10 +152,11 @@ Assets:
 - Assets/AnimationClip/Armature_vententer.anim
 - Assets/AudioClip/old096cbchase.ogg
 - Assets/ShyGuyVideo.m4v
+- Assets/Assets/NetworkPrefabsList.asset
 - Assets/Material/glowingeyes.mat
-- Assets/shyguy.controller
 - Assets/Shader/Hidden_Core_FallbackError.shader
 - Assets/Shader/HDRP_Unlit.shader
+- Assets/shyguy.controller
 - Assets/AnimationClip/Armature_angeredrun.anim
 - Assets/AudioClip/Stun096.ogg
 - Assets/AudioClip/old096cbtrigger.ogg

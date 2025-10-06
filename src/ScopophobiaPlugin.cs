@@ -4,12 +4,11 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
-using LethalLib;
-using LethalLib.Modules;
 using Scopophobia.Dependencies;
 using Scopophobia.Patches;
 using UnityEngine;
-using BepInEx.Bootstrap;
+using Unity.Netcode;
+using Dawn;
 
 namespace Scopophobia
 {
@@ -18,7 +17,10 @@ namespace Scopophobia
     public class ScopophobiaPlugin : BaseUnityPlugin
     {
         private readonly Harmony harmony = new Harmony("Scopophobia");
-
+        public static class ScopophobiaKeys
+        {
+            public static readonly NamespacedKey<DawnItemInfo> Painting = NamespacedKey<DawnItemInfo>.From("scopophobia", "painting");
+        }
         public static EnemyType shyGuy;
 
         public static AssetBundle Assets;
@@ -68,13 +70,11 @@ namespace Scopophobia
             shyGuy = Assets.LoadAsset<EnemyType>("ShyGuyDef.asset");
             TerminalNode val = Assets.LoadAsset<TerminalNode>("ShyGuyTerminal.asset");
             TerminalKeyword val2 = Assets.LoadAsset<TerminalKeyword>("ShyGuyKeyword.asset");
-            Item Paint1 = Assets.LoadAsset<Item>("ShyGuyPainting.asset");
-            NetworkPrefabs.RegisterNetworkPrefab(shyGuy.enemyPrefab);
-            NetworkPrefabs.RegisterNetworkPrefab(Paint1.spawnPrefab);
-            Items.RegisterScrap(Paint1, Scopophobia.Config.PaintingSpawnRate, Levels.LevelTypes.All);
-            Enemies.RegisterEnemy(shyGuy, 15, Levels.LevelTypes.All, Enemies.SpawnType.Default, val, val2);
+            ShyGuyPainting1 = Assets.LoadAsset<Item>("ShyGuyPainting.asset");
+            DawnLib.RegisterNetworkPrefab(shyGuy.enemyPrefab);
+            DawnLib.RegisterNetworkPrefab(ShyGuyPainting1.spawnPrefab);
+            DawnLib.DefineItem(ScopophobiaKeys.Painting, ShyGuyPainting1, builder => { builder.DefineScrap(scrapBuilder => { scrapBuilder.SetWeights(scrapBuilder => { scrapBuilder.SetGlobalWeight(Scopophobia.Config.PaintingSpawnRate); }); }); });
             logger.LogInfo("Scopophobia | SCP-096 has entered the facility. All remaining personnel proceed with caution.");
-            harmony.PatchAll(typeof(Plugin));
             harmony.PatchAll(typeof(GetShyGuyPrefabForLaterUse));
             harmony.PatchAll(typeof(AudioSpatializerDisabler));//disable annoying audiospacializer issue globally
             harmony.PatchAll(typeof(RoundManagerPatch));//credit Crit / Zehs

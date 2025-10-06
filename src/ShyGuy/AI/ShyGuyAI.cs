@@ -1,11 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using BepInEx.Bootstrap;
 using GameNetcodeStuff;
 using Scopophobia;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -390,24 +387,20 @@ namespace ShyGuy.AI
                         }
                         PlayerControllerB oldTargetPlayer = targetPlayer;
                         float closestDist = float.PositiveInfinity;
-
                         for (int i = SCP096Targets.Count - 1; i >= 0; i--)
                         {
                             PlayerControllerB hunted = SCP096Targets[i];
 
                             bool sameArea = hunted.isInsideFactory == !isOutside;
-                            bool allowedToLeave = true;
-                            if (!Config.canExitFacility && !sameArea)
-                            {
-                                allowedToLeave = false;
-                            }
+                            bool allowedToLeave = Config.canExitFacility || sameArea;
+
                             if (!hunted.isPlayerDead && allowedToLeave)
                             {
                                 float distance = Vector3.Distance(hunted.transform.position, transform.position);
 
-                                if (!hunted.isPlayerDead && hunted.isPlayerControlled && hunted.inAnimationWithEnemy == null && hunted.sinkingValue < 0.73f && distance < closestDist)//manually check if player is targetable, as it blocks if players are in the ship
+                                if (hunted.isPlayerControlled && hunted.inAnimationWithEnemy == null && hunted.sinkingValue < 0.73f && distance < closestDist)
                                 {
-                                    closestDist = Vector3.Magnitude(hunted.transform.position - transform.position);
+                                    closestDist = distance;
                                     targetPlayer = hunted;
                                     ScopophobiaPlugin.Instance.LogInfoExtended($"{targetPlayer.playerClientId} is Hunted!");
                                 }
@@ -418,6 +411,7 @@ namespace ShyGuy.AI
                                 AddTargetToList((int)hunted.actualClientId, remove: true);
                             }
                         }
+                        
                         if (targetPlayer != null)
                         {
                             creatureAnimator.SetFloat("DistanceToTarget", Vector3.Distance(transform.position, targetPlayer.transform.position));
@@ -440,7 +434,11 @@ namespace ShyGuy.AI
                             }
                             if (targetPlayer.isInsideFactory != !isOutside)
                             {//new code. if not already pathing, lets find closest teleport. Then move to it if not right there. Else, continue as normal.
-                                if (!pathingToTeleport) { GetClosestTeleportAndMove(); }
+                                if (!pathingToTeleport)
+                                {
+                                    ScopophobiaPlugin.Instance.LogInfoExtended($"{targetPlayer.name}  Is Outside: {targetPlayer.isInsideFactory}, Looking for Teleport");
+                                    GetClosestTeleportAndMove();
+                                }
 
                                 if (Vector3.Distance(transform.position, closestTeleport.entrancePoint.position) < 1f && pathingToTeleport)
                                 {
@@ -453,7 +451,7 @@ namespace ShyGuy.AI
                                 {
                                     movingTowardsTargetPlayer = false;
                                     SetDestinationToPosition(closestTeleport.entrancePoint.position);
-                                    ScopophobiaPlugin.Instance.LogInfoExtended($"{targetPlayer.name} is Not in area, looking for entranceteleport");
+                                    ScopophobiaPlugin.Instance.LogInfoExtended($"{targetPlayer.name} is Not in area, heading to closest Tele: {closestTeleport.entranceId}");
                                 }
                             }
                             else//Player in sights, continuing attack strategy
@@ -484,10 +482,10 @@ namespace ShyGuy.AI
             {
                 if (!tele.FindExitPoint() || tele.entrancePoint == null) { continue; }
                 NavMeshPath path = new NavMeshPath();
-                if (agent.CalculatePath(tele.entrancePoint.transform.position, path) && path.status == NavMeshPathStatus.PathComplete)//if path fails, this might take a while. shouldn't be an issue however.
+                if (agent.CalculatePath(tele.entrancePoint.position, path) && path.status == NavMeshPathStatus.PathComplete)//if path fails, this might take a while. shouldn't be an issue however.
                 {
                     float distToTeleport = Vector3.Distance(transform.position, tele.entrancePoint.position);
-                    float distToMain = Vector3.Distance(transform.position, mainEntrance.entrancePoint.position);
+                    float distToMain = Vector3.Distance(transform.position, mainEntrancePosition);
                     if (distToTeleport < distToMain || tele.entranceId == mainEntrance.entranceId)
                     {
                         ScopophobiaPlugin.Instance.LogInfoExtended($"Teleport Found: {tele.entranceId}. Pathing Passed tests.");
@@ -720,7 +718,7 @@ namespace ShyGuy.AI
         public override void OnNetworkSpawn()//fix for late joiners who can't hear shy guy
         {
             base.OnNetworkSpawn();
-            if (IsClient)
+            if (!IsServer)
             {
                 syncedAudioClipID.OnValueChanged += OnAudioClipChanged;
                 if (syncedAudioClipID.Value >= 0)
@@ -750,7 +748,7 @@ namespace ShyGuy.AI
             if (!inKillAnimation && !isEnemyDead && currentBehaviourStateIndex == 2)
             {
                 PlayerControllerB playerControllerB = MeetsStandardPlayerCollisionConditions(other);
-                if (playerControllerB != null && SCP096Targets.Contains(playerControllerB))//check player is target, to stop him murdering random players when aggro
+                if (playerControllerB != null)
                 {
                     inKillAnimation = true;
                     StartCoroutine(killPlayerAnimation((int)playerControllerB.actualClientId));
@@ -758,7 +756,7 @@ namespace ShyGuy.AI
                 }
             }
         }
-        [ServerRpc(RequireOwnership = false)]
+        [ServerRpc]
         private void KillPlayerServerRpc(int playerId)
         {
             KillPlayerClientRpc(playerId);
@@ -820,7 +818,7 @@ namespace ShyGuy.AI
             SitDownServerRpc();
         }
 
-        [ServerRpc(RequireOwnership = false)]
+        [ServerRpc]
         private void SitDownServerRpc()
         {
             SitDownClientRpc();
@@ -858,7 +856,7 @@ namespace ShyGuy.AI
             AddTargetToListServerRpc(playerId, remove);
         }
 
-        [ServerRpc(RequireOwnership = false)]
+        [ServerRpc]
         public void AddTargetToListServerRpc(int playerId, bool remove)
         {
             AddTargetToListClientRpc(playerId, remove);

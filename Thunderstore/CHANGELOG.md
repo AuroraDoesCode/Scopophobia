@@ -1,3 +1,6 @@
+# 1.2.9
++ Quick Update for v73 Support.
++ Switch from LethalLib to DawnLib. (Basic Implement, Guaranteed to change in future) Thanks @Xu for answering my stupid questions.
 # 1.2.8
 ## Here we are with more fixes
 + Fix Audio RPC issue (Thanks Lunxara)

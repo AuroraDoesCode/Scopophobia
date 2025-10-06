@@ -1,8 +1,5 @@
-﻿using LethalLib;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace Scopophobia
@@ -132,7 +129,7 @@ namespace Scopophobia
         {
             foreach (var enemyType in GetEnemyTypes())
             {
-                if (enemyType.enemyName == enemyName)
+                if (enemyType.enemyName == "Shy guy")
                 {
                     return enemyType;
                 }
