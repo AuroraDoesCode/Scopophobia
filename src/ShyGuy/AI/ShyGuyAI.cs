@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using GameNetcodeStuff;
 using Scopophobia;
 using Unity.Netcode;
@@ -109,7 +110,6 @@ namespace ShyGuy.AI
         private float timeToTrigger = 0.5f;
 
         private float lastInterval;
-
         private bool inKillAnimation;
 
         private bool isInElevatorStartRoom;
@@ -303,11 +303,7 @@ namespace ShyGuy.AI
             {
                 case 0:
                     {
-                        if (stunNormalizedTimer > 0f)
-                        {
-                            agent.speed = 0f;
-                        }
-                        else if (sitting)
+                        if (stunNormalizedTimer > 0f || sitting)
                         {
                             agent.speed = 0f;
                         }
@@ -321,12 +317,12 @@ namespace ShyGuy.AI
                         agent.stoppingDistance = 4f;
                         addPlayerVelocityToDestination = 0f;
                         PlayerControllerB targetPlayer = base.targetPlayer;
-                        if (roamWaitTime <= 20f && roamMap.inProgress && base.targetPlayer == null)
+                        if (roamWaitTime <= 20f && roamMap.inProgress && targetPlayer == null)
                         {
                             StopSearch(roamMap);
                             lastInterval = Time.realtimeSinceStartup;
                         }
-                        else if (roamWaitTime > 2.5f && roamWaitTime <= 15f && !roamMap.inProgress && base.targetPlayer == null && roamShouldSit)
+                        else if (roamWaitTime > 2.5f && roamWaitTime <= 15f && !roamMap.inProgress && targetPlayer == null && roamShouldSit)
                         {
                             creatureVoice.Stop();
                             sitting = true;
@@ -337,7 +333,7 @@ namespace ShyGuy.AI
                             }
                             lastInterval = Time.realtimeSinceStartup;
                         }
-                        else if (!(base.targetPlayer != null) && targetPlayer == null && !roamMap.inProgress && roamWaitTime <= 0f)
+                        else if (!(targetPlayer != null) && targetPlayer == null && !roamMap.inProgress && roamWaitTime <= 0f)
                         {
                             if (!sitting)
                             {
@@ -400,7 +396,7 @@ namespace ShyGuy.AI
 
                                 if (hunted.isPlayerControlled && hunted.inAnimationWithEnemy == null && hunted.sinkingValue < 0.73f && distance < closestDist)
                                 {
-                                    closestDist = distance;
+                                    closestDist = Vector3.Magnitude(hunted.transform.position - transform.position);
                                     targetPlayer = hunted;
                                     ScopophobiaPlugin.Instance.LogInfoExtended($"{targetPlayer.playerClientId} is Hunted!");
                                 }
@@ -411,7 +407,7 @@ namespace ShyGuy.AI
                                 AddTargetToList((int)hunted.actualClientId, remove: true);
                             }
                         }
-                        
+
                         if (targetPlayer != null)
                         {
                             creatureAnimator.SetFloat("DistanceToTarget", Vector3.Distance(transform.position, targetPlayer.transform.position));
@@ -440,23 +436,23 @@ namespace ShyGuy.AI
                                     GetClosestTeleportAndMove();
                                 }
 
-                                if (Vector3.Distance(transform.position, closestTeleport.entrancePoint.position) < 1f && pathingToTeleport)
+                                if (Vector3.Distance(transform.position, closestTeleport.entrancePoint.transform.position) < 2f && pathingToTeleport)
                                 {
-                                    TeleAndRefreshEnemy(closestTeleport.exitPoint.position, !isOutside);
-                                    timeAtLastUsingEntrance =  Time.time;
+                                    TeleAndRefreshEnemy(closestTeleport.exitPoint.transform.position, !isOutside);
+                                    timeAtLastUsingEntrance = Time.time;
                                     agent.speed = 0f;
                                     return;
                                 }
                                 else
                                 {
                                     movingTowardsTargetPlayer = false;
-                                    SetDestinationToPosition(closestTeleport.entrancePoint.position);
+                                    SetDestinationToPosition(closestTeleportPosition);
                                     ScopophobiaPlugin.Instance.LogInfoExtended($"{targetPlayer.name} is Not in area, heading to closest Tele: {closestTeleport.entranceId}");
                                 }
                             }
                             else//Player in sights, continuing attack strategy
                             {
-                                if (PathIsIntersectedByLineOfSight(RoundManager.Instance.GetNavMeshPosition(targetPlayer.transform.position, default(NavMeshHit), 5f, -1)))
+                                if (PathIsIntersectedByLineOfSight(RoundManager.Instance.GetNavMeshPosition(targetPlayer.transform.position, RoundManager.Instance.navHit, 5f, -1), false, false, true))
                                 {
                                     SetMovingTowardsTargetPlayer(targetPlayer);
                                 }
@@ -482,15 +478,23 @@ namespace ShyGuy.AI
             {
                 if (!tele.FindExitPoint() || tele.entrancePoint == null) { continue; }
                 NavMeshPath path = new NavMeshPath();
-                if (agent.CalculatePath(tele.entrancePoint.position, path) && path.status == NavMeshPathStatus.PathComplete)//if path fails, this might take a while. shouldn't be an issue however.
+                if (agent.CalculatePath(tele.entrancePoint.transform.position, path) && path.status == NavMeshPathStatus.PathComplete)//if path fails, this might take a while. shouldn't be an issue however.
                 {
                     float distToTeleport = Vector3.Distance(transform.position, tele.entrancePoint.position);
                     float distToMain = Vector3.Distance(transform.position, mainEntrancePosition);
-                    if (distToTeleport < distToMain || tele.entranceId == mainEntrance.entranceId)
+                    if (distToTeleport < distToMain && tele.entranceId != mainEntrance.entranceId)//lets check both in case the distance is closer. 
                     {
-                        ScopophobiaPlugin.Instance.LogInfoExtended($"Teleport Found: {tele.entranceId}. Pathing Passed tests.");
+                        ScopophobiaPlugin.Instance.LogInfoExtended($"Teleport Found, and closer than Main Exit. Pathing to {tele.entranceId}");
                         closestTeleport = tele;
-                        closestTeleportPosition = tele.entrancePoint.position;
+                        closestTeleportPosition = tele.entrancePoint.transform.position;
+                        pathingToTeleport = true;
+                        break;
+                    }
+                    else if(tele.entranceId == mainEntrance.entranceId)
+                    {
+                        ScopophobiaPlugin.Instance.LogInfoExtended($"Teleport Found, but main is Closer. Heading there instead! {tele.entranceId}");
+                        closestTeleport = tele;
+                        closestTeleportPosition = tele.entrancePoint.transform.position;
                         pathingToTeleport = true;
                         break;
                     }
@@ -528,14 +532,14 @@ namespace ShyGuy.AI
                 agent.enabled = false;
                 transform.position = navMeshPosition;
                 agent.enabled = true;
+                agent.Warp(navMeshPosition);//fix for Wesley Moons
             }
             else
             {
-                transform.position = navMeshPosition;
+                this.transform.position = navMeshPosition;
             }
             serverPosition = navMeshPosition;
             SetEnemyOutside(setOutside);
-            agent.Warp(Pos);//fix for Wesley Moons
             pathingToTeleport = false;
             if (closestTeleport.doorAudios != null && closestTeleport.doorAudios.Length != 0)
             {
@@ -568,7 +572,6 @@ namespace ShyGuy.AI
         }
         public override void Update()
         {
-            var networkManager = GameNetworkManager.Instance;
             if (isEnemyDead || GameNetworkManager.Instance == null)
                 return;
             CalculateAnimationSpeed();
@@ -707,6 +710,10 @@ namespace ShyGuy.AI
         [ClientRpc]
         public void PlayAudioFXClientRpc(int audioClipID)
         {
+            playAudioFx(audioClipID);
+        }
+        public void playAudioFx(int audioClipID)
+        {
             switch (audioClipID)
             {
                 case 0: farAudio.Stop(); creatureVoice.Stop(); creatureVoice.volume = Config.VolumeConfigs * 0.1f; creatureVoice.clip = crySittingSFX; creatureVoice.loop = true; float preTime = creatureVoice.time; creatureVoice.time = preTime; creatureVoice.Play(); break;
@@ -734,8 +741,14 @@ namespace ShyGuy.AI
         {
             isOutside = outside;
             mainEntrancePosition = RoundManager.Instance.GetNavMeshPosition(RoundManager.FindMainEntrancePosition(getTeleportPosition: true, outside));
-            if (!outside) allAINodes = GameObject.FindGameObjectsWithTag("OutsideAINode");
-            else allAINodes = GameObject.FindGameObjectsWithTag("AINode");
+            if (outside)
+            {
+                allAINodes = GameObject.FindGameObjectsWithTag("OutsideAINode");
+            }
+            else
+            {
+                allAINodes = GameObject.FindGameObjectsWithTag("AINode");
+            }
         }
 
         public override void OnCollideWithPlayer(Collider other)
@@ -751,12 +764,12 @@ namespace ShyGuy.AI
                 if (playerControllerB != null)
                 {
                     inKillAnimation = true;
-                    StartCoroutine(killPlayerAnimation((int)playerControllerB.actualClientId));
-                    KillPlayerServerRpc((int)playerControllerB.actualClientId);
+                    StartCoroutine(killPlayerAnimation((int)playerControllerB.playerClientId));
+                    KillPlayerServerRpc((int)playerControllerB.playerClientId);
                 }
             }
         }
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void KillPlayerServerRpc(int playerId)
         {
             KillPlayerClientRpc(playerId);
@@ -818,7 +831,7 @@ namespace ShyGuy.AI
             SitDownServerRpc();
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void SitDownServerRpc()
         {
             SitDownClientRpc();
@@ -856,7 +869,7 @@ namespace ShyGuy.AI
             AddTargetToListServerRpc(playerId, remove);
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         public void AddTargetToListServerRpc(int playerId, bool remove)
         {
             AddTargetToListClientRpc(playerId, remove);

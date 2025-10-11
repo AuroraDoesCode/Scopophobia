@@ -8,19 +8,21 @@ using Scopophobia.Dependencies;
 using Scopophobia.Patches;
 using UnityEngine;
 using Unity.Netcode;
-using Dawn;
+using LethalLib;
+using LethalLib.Modules;
 
 namespace Scopophobia
 {
-    [BepInPlugin("Scopophobia", "Scopophobia", "1.2.9")]
+    [BepInPlugin("Scopophobia", "Scopophobia", "1.2.91")]
     [BepInDependency(LethalConfigProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     public class ScopophobiaPlugin : BaseUnityPlugin
     {
         private readonly Harmony harmony = new Harmony("Scopophobia");
-        public static class ScopophobiaKeys
-        {
-            public static readonly NamespacedKey<DawnItemInfo> Painting = NamespacedKey<DawnItemInfo>.From("scopophobia", "painting");
-        }
+       // public static class ScopophobiaKeys
+       // {
+           // public static readonly NamespacedKey<DawnItemInfo> Painting = NamespacedKey<DawnItemInfo>.From("scopophobia", "painting");
+           // public static readonly NamespacedKey<DawnEnemyInfo> ShyGuy = NamespacedKey<DawnEnemyInfo>.From("scopophobia", "shyguy");
+        //}//comment dawnlib temporarily for a 1.3.0 release
         public static EnemyType shyGuy;
 
         public static AssetBundle Assets;
@@ -71,9 +73,13 @@ namespace Scopophobia
             TerminalNode val = Assets.LoadAsset<TerminalNode>("ShyGuyTerminal.asset");
             TerminalKeyword val2 = Assets.LoadAsset<TerminalKeyword>("ShyGuyKeyword.asset");
             ShyGuyPainting1 = Assets.LoadAsset<Item>("ShyGuyPainting.asset");
-            DawnLib.RegisterNetworkPrefab(shyGuy.enemyPrefab);
-            DawnLib.RegisterNetworkPrefab(ShyGuyPainting1.spawnPrefab);
-            DawnLib.DefineItem(ScopophobiaKeys.Painting, ShyGuyPainting1, builder => { builder.DefineScrap(scrapBuilder => { scrapBuilder.SetWeights(scrapBuilder => { scrapBuilder.SetGlobalWeight(Scopophobia.Config.PaintingSpawnRate); }); }); });
+            LethalLib.Modules.NetworkPrefabs.RegisterNetworkPrefab(shyGuy.enemyPrefab);
+            LethalLib.Modules.NetworkPrefabs.RegisterNetworkPrefab(ShyGuyPainting1.spawnPrefab);
+            Enemies.RegisterEnemy(shyGuy, 15, Levels.LevelTypes.All, val, val2);
+            Items.RegisterScrap(ShyGuyPainting1, Scopophobia.Config.paintingSpawnRateConfig.Value, Levels.LevelTypes.All);
+            //DawnLib.RegisterNetworkPrefab(shyGuy.enemyPrefab);//temp comment out until DawnLib gets an official update.
+            //DawnLib.RegisterNetworkPrefab(ShyGuyPainting1.spawnPrefab);
+            //DawnLib.DefineItem(ScopophobiaKeys.Painting, ShyGuyPainting1, builder => { builder.DefineScrap(scrapBuilder => { scrapBuilder.SetWeights(scrapBuilder => { scrapBuilder.SetGlobalWeight(Scopophobia.Config.PaintingSpawnRate); }); }); });
             logger.LogInfo("Scopophobia | SCP-096 has entered the facility. All remaining personnel proceed with caution.");
             harmony.PatchAll(typeof(GetShyGuyPrefabForLaterUse));
             harmony.PatchAll(typeof(AudioSpatializerDisabler));//disable annoying audiospacializer issue globally
@@ -98,6 +104,7 @@ namespace Scopophobia
                 }
             }
         }
+
 
         public void LogInfoExtended(object data)
         {

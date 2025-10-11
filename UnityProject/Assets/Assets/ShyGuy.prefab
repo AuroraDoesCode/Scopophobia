@@ -234,9 +234,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1.33
   MinDistance: 1
-  MaxDistance: 19
+  MaxDistance: 25
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -2101,7 +2101,7 @@ MonoBehaviour:
     onlySearchNodesInLOS: 0
   DebugEnemy: 0
   stunnedIndefinitely: 0
-  stunNormalizedTimer: 0
+  stunNormalizedTimer: 4
   postStunInvincibilityTimer: 0
   stunnedByPlayer: {fileID: 0}
   debugEnemyAI: 0
@@ -2113,15 +2113,12 @@ MonoBehaviour:
   mainCollider: {fileID: 136527517308706785}
   CompanyCruiser: {fileID: 0}
   pryingOpenDoor: 0
-  pathingToTeleport: 0
-  closestTeleportPosition: {x: 0, y: 0, z: 0}
   shipDoor: {fileID: 0}
   pryOpenDoorAnimLength: 3.333333
   breakAndEnter: {fileID: 8300000, guid: f7540dd8e58f0984a84e063eeecf9061, type: 3}
   shipAlarm: {fileID: 8300000, guid: 57dad9531228736449d71c57d62b787b, type: 3}
   breakDownDoorAudio: {fileID: 3927212994448733107}
   farAudio: {fileID: 82884239528316546}
-  typeName: ShyGuyAI
   footstepSource: {fileID: 82497066530386577}
   screamSFX: {fileID: 8300000, guid: 2800777624dd1b1498788095339015dc, type: 3}
   panicSFX: {fileID: 8300000, guid: 9e02709ce5e34a84788d3b40d8bbb3b9, type: 3}
@@ -2159,8 +2156,11 @@ MonoBehaviour:
     randomized: 0
     onlySearchNodesInLOS: 0
   shyGuyFace: {fileID: 4441780023246982}
+  pathingToTeleport: 0
+  closestTeleportPosition: {x: 0, y: 0, z: 0}
   closestTeleport: {fileID: 0}
   triggerDuration: 66.4
+  agent: {fileID: 195484254653135146}
   SCP096Targets: []
 --- !u!1 &1784991936493905
 GameObject:
@@ -2572,9 +2572,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0.33
   MinDistance: 3
-  MaxDistance: 55
+  MaxDistance: 75
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -2822,9 +2822,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 30
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0

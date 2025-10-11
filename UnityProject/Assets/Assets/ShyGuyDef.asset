@@ -17,8 +17,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 0.00046920776
+      time: 0.0041656494
+      value: 0.40156174
       inSlope: 0.09032893
       outSlope: 0.09032893
       tangentMode: 0
@@ -71,21 +71,21 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.00046920776
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.33333334
+      outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 0.00046920776
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -100,7 +100,7 @@ MonoBehaviour:
   numberSpawned: 0
   nestsSpawned: 0
   isOutsideEnemy: 0
-  isDaytimeEnemy: 0
+  isDaytimeEnemy: 1
   increasedChanceInterior: 0
   normalizedTimeInDayToLeave: 0
   stunTimeMultiplier: 4
@@ -110,11 +110,11 @@ MonoBehaviour:
   canDie: 0
   canBeDestroyed: 0
   destroyOnDeath: 0
-  canSeeThroughFog: 0
+  canSeeThroughFog: 1
   pushPlayerForce: 0
   pushPlayerDistance: 0
   SizeLimit: 0
-  EnemySize: 0
+  EnemySize: 2
   timeToPlayAudio: 0
   loudnessMultiplier: 0
   overrideVentSFX: {fileID: 0}

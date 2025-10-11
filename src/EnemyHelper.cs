@@ -129,7 +129,7 @@ namespace Scopophobia
         {
             foreach (var enemyType in GetEnemyTypes())
             {
-                if (enemyType.enemyName == "Shy guy")
+                if (enemyType.enemyName == enemyName)
                 {
                     return enemyType;
                 }
@@ -146,7 +146,7 @@ namespace Scopophobia
                     return enemyType;
                 }
             }
-            catch { }
+            catch { return ScopophobiaPlugin.shyGuy; }
 
             return null;
         }

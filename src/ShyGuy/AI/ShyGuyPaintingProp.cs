@@ -85,7 +85,7 @@ namespace Scopophobia
             if (randomChance <= Mathf.Clamp(Config.ChanceOfShyGuy, 0, 100))
             {
                 PlayAudioFX(fearSFX);
-                StartSpawnShyGuy((int)targetPlayer.playerClientId);
+                StartSpawnShyGuy();
                 hasSpawned = true;
                 ScopophobiaPlugin.Instance.LogInfoExtended("Random chance met, spawning a shy guy");
             }
@@ -115,7 +115,7 @@ namespace Scopophobia
             targetPlayer = playerHeldBy;
 
             PlayAudioFX(fearSFX);
-            StartSpawnShyGuy((int)targetPlayer.playerClientId);
+            StartSpawnShyGuy();
             StartCoroutine(ResetPaintingCooldown());
         }
         private IEnumerator ResetPaintingCooldown()
@@ -137,16 +137,26 @@ namespace Scopophobia
             PaintingSound.Play();
         }
 
-        public void StartSpawnShyGuy(int targetClientId)
+        public void StartSpawnShyGuy(int? explicitTargetClientId = null)
         {
             if (IsServer)
             {
-                SpawnEnemyOnServer(targetClientId);
+                // If no explicit ID provided, fall back to whoever is holding it on the server
+                int targetId = explicitTargetClientId ?? (int)playerHeldBy.playerClientId;
+                SpawnEnemyOnServer(targetId);
             }
             else
             {
-                SpawnEnemyServerRpc(targetClientId);
+                // Client tells the server to spawn; server infers who called it
+                SpawnEnemyServerRpc();
             }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SpawnEnemyServerRpc(ServerRpcParams rpcParams = default)
+        {
+            int triggeringClientId = (int)rpcParams.Receive.SenderClientId;
+            SpawnEnemyOnServer(triggeringClientId);
         }
         public void ResetSpawnState()
         {
@@ -158,24 +168,19 @@ namespace Scopophobia
             randomChance = 0;
         }
 
-        [ServerRpc(RequireOwnership =false)]
-        public void SpawnEnemyServerRpc(int targetClientId)
-        {
-            SpawnEnemyOnServer(targetClientId);
-        }
         public void SpawnEnemyOnServer(int targetClientId)
         {
             PlayerControllerB target = StartOfRound.Instance.allPlayerScripts[targetClientId];
             Vector3 spawnPos = RoundManager.Instance.GetRandomNavMeshPositionInRadius(
                 target.transform.position, 15f, RoundManager.Instance.navHit
             );
-            ScopophobiaPlugin.Instance.LogInfoExtended($"Target found: {target.playerClientId}");
+            ScopophobiaPlugin.Instance.LogInfoExtended($"[SpawnEnemyOnServer] Triggered by client {targetClientId} ({StartOfRound.Instance.allPlayerScripts[targetClientId].playerUsername})");
             var enemy = RoundManager.Instance.currentLevel.Enemies.Find(x => x.enemyType.enemyName.ToLower() == "shy guy");//search current level in case shy guy is disabled
             if (enemy == null) { ScopophobiaPlugin.Instance.LogInfoExtended("Shy Guy Enemy Not found"); return; }
             var obj = Instantiate(enemy.enemyType.enemyPrefab, spawnPos, Quaternion.identity);
             var netObj = obj.GetComponent<NetworkObject>();
             if(netObj != null) ScopophobiaPlugin.Instance.LogInfoExtended("Found Network Object");
-            netObj.Spawn(destroyWithScene: true);
+            netObj.SpawnWithOwnership(StartOfRound.Instance.allPlayerScripts[0].actualClientId,destroyWithScene: true);
             ShyGuyAI ai = obj.GetComponentInChildren<ShyGuyAI>();
 
             ai.SwitchToBehaviourState(1);//triggered state

@@ -31,10 +31,10 @@ namespace Scopophobia.Data
 
             string section = $"{planetName} Spawn Settings";
 
-            SpawnWeight = Config.Bind(section, "SpawnWeight", defaultValue: DefaultValues.SpawnWeight, requiresRestart: false, $"The spawn weight of {EnemyDataManager.EnemyName}.");
-            MaxSpawnCount = Config.Bind(section, "MaxSpawnCount", defaultValue: DefaultValues.MaxSpawnCount, requiresRestart: false, $"The max amount of {EnemyDataManager.EnemyName} that can spawn.");
-            SpawnInside = Config.Bind(section, "SpawnInside", defaultValue: DefaultValues.SpawnInside, requiresRestart: false, $"If enabled, {EnemyDataManager.EnemyName} will be able to spawn inside.");
-            SpawnOutside = Config.Bind(section, "SpawnOutside", defaultValue: DefaultValues.SpawnOutside, requiresRestart: false, $"If enabled, {EnemyDataManager.EnemyName} will be able to spawn outside.");
+            SpawnWeight = Config.Bind(section, "SpawnWeight", defaultValue: 15, requiresRestart: false, $"The spawn weight of {EnemyDataManager.EnemyName}.");
+            MaxSpawnCount = Config.Bind(section, "MaxSpawnCount", defaultValue: 1, requiresRestart: false, $"The max amount of {EnemyDataManager.EnemyName} that can spawn.");
+            SpawnInside = Config.Bind(section, "SpawnInside", defaultValue: true, requiresRestart: false, $"If enabled, {EnemyDataManager.EnemyName} will be able to spawn inside.");
+            SpawnOutside = Config.Bind(section, "SpawnOutside", defaultValue: false, requiresRestart: false, $"If enabled, {EnemyDataManager.EnemyName} will be able to spawn outside.");
 
             SpawnWeight.SettingChanged += SpawnWeight_SettingChanged;
             MaxSpawnCount.SettingChanged += MaxSpawnCount_SettingChanged;
@@ -87,7 +87,7 @@ namespace Scopophobia.Data
 
     public class EnemyConfigDataDefault
     {
-        public int SpawnWeight = 1;
+        public int SpawnWeight = 15;
         public int MaxSpawnCount = 1;
         public bool SpawnInside = true;
         public bool SpawnOutside = true;

@@ -651,18 +651,6 @@
           }
         }
       },
-      "TeamXiaolan.DawnLib/0.2.16": {
-        "type": "package",
-        "dependencies": {
-          "Evaisa.LethalLib": "1.1.1"
-        },
-        "compile": {
-          "lib/netstandard2.1/com.github.teamxiaolan.dawnlib.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.1/com.github.teamxiaolan.dawnlib.dll": {}
-        }
-      },
       "UnityEngine.Modules/2022.3.62": {
         "type": "package",
         "compile": {
@@ -2701,18 +2689,6 @@
         "system.threading.tasks.nuspec"
       ]
     },
-    "TeamXiaolan.DawnLib/0.2.16": {
-      "sha512": "A5+y8hly2T5m3GpmblZPV1I9pozqk8/ua1HisHVG/KsG7cQppHZ+HiUMsfDXTHKgAWWcLQk7h+KqR3/CU2KXJQ==",
-      "type": "package",
-      "path": "teamxiaolan.dawnlib/0.2.16",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/netstandard2.1/com.github.teamxiaolan.dawnlib.dll",
-        "teamxiaolan.dawnlib.0.2.16.nupkg.sha512",
-        "teamxiaolan.dawnlib.nuspec"
-      ]
-    },
     "UnityEngine.Modules/2022.3.62": {
       "sha512": "zpu5dELUCFt7Rvvzp50iTrfVusJg+2gmlcaytGEoHYuIP+AOv57X272czjp+sA8N1onPo/IiHFnOEFtT9rLJBA==",
       "type": "package",
@@ -2927,8 +2903,8 @@
       "BepInEx.Analyzers >= 1.*",
       "BepInEx.Core >= 5.*",
       "BepInEx.PluginInfoProps >= 1.*",
+      "Evaisa.LethalLib >= 1.1.1",
       "LethalCompany.GameLibs.Steam >= *-*",
-      "TeamXiaolan.DawnLib >= 0.2.16",
       "UnityEngine.Modules >= 2022.3.62"
     ]
   },
@@ -3000,14 +2976,14 @@
             "target": "Package",
             "version": "[1.*, )"
           },
+          "Evaisa.LethalLib": {
+            "target": "Package",
+            "version": "[1.1.1, )"
+          },
           "LethalCompany.GameLibs.Steam": {
             "suppressParent": "All",
             "target": "Package",
             "version": "[*-*, )"
-          },
-          "TeamXiaolan.DawnLib": {
-            "target": "Package",
-            "version": "[0.2.16, )"
           },
           "UnityEngine.Modules": {
             "include": "Compile",

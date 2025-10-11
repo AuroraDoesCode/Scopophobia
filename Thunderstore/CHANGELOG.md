@@ -1,3 +1,7 @@
+# 1.2.91
+## Quick Hotfix
++ Fix for configs resetting spawn weight to 0 (Thanks Lunxara for letting me know.)
++ May fix targetting multiple players again. I havent had enough time to test with others yet, but also shouldn't cause an issue even if it doesn't work.
 # 1.2.9
 + Quick Update for v73 Support.
 + Switch from LethalLib to DawnLib. (Basic Implement, Guaranteed to change in future) Thanks @Xu for answering my stupid questions.
