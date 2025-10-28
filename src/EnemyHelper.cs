@@ -137,7 +137,7 @@ namespace Scopophobia
 
             try
             {
-                EnemyType enemyType = Resources.FindObjectsOfTypeAll<EnemyType>().Single((EnemyType x) => x.enemyName == enemyName);
+                EnemyType enemyType = Resources.FindObjectsOfTypeAll<EnemyType>().Single((EnemyType x) => x.enemyName.ToLower() == enemyName);
 
                 if (IsValidEnemyType(enemyType) && NetworkUtils.IsNetworkPrefab(enemyType.enemyPrefab))
                 {
@@ -146,7 +146,7 @@ namespace Scopophobia
                     return enemyType;
                 }
             }
-            catch { return ScopophobiaPlugin.shyGuy; }
+            catch { }
 
             return null;
         }

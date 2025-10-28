@@ -1,5 +1,6 @@
 ﻿using GameNetcodeStuff;
 using ShyGuy.AI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -16,7 +17,7 @@ namespace Scopophobia
         private bool updatedScannode;
 
         private bool isTriggered;
-        private bool hasSpawned;
+        public bool hasSpawned;
         private bool isForceSpawn;
         private ScanNodeProperties scanNode;
         public AudioSource PaintingSound;
@@ -26,6 +27,7 @@ namespace Scopophobia
         public AudioClip[] PaintingCrySFX;
         public AudioClip[] fearSFX; 
         private float lastUseTime = 0f;
+        private bool hasTriggeredFromBag;
 
         public override int GetItemDataToSave()
         {
@@ -62,10 +64,65 @@ namespace Scopophobia
                 case 2: scanNode.headerText = "Odd Painting of SCP-096"; updatedScannode = true; break;
             }
         }
+        public void TriggerFromBeltBag(PlayerControllerB player)
+        {
+            targetPlayer = player;
+            if (!CanTriggerPaintingInBag()) return;
+            isTriggered = true;
+            ScopophobiaPlugin.Instance.LogInfoExtended($"Shy Guy Painting triggered by {targetPlayer.playerClientId}");
 
+            randomChance = UnityEngine.Random.Range(0, 101);
+            if (randomChance <= Mathf.Clamp(Config.ChanceOfShyGuy, 0, 100))
+            {
+                PlayAudioFX(fearSFX);
+                StartSpawnShyGuy((int)targetPlayer.playerClientId);
+                hasSpawned = true;
+                ScopophobiaPlugin.Instance.LogInfoExtended("Random chance met, spawning a shy guy");
+            }
+            else
+            {
+                PlayAudioFX(PaintingCrySFX);
+                ResetSpawnState();
+                ScopophobiaPlugin.Instance.LogInfoExtended($"Survived Spawn Attempt. Random chance was: {randomChance}");
+                if (IsOwner)
+                {
+                    HUDManager.Instance.DisplayTip("Shy Guy Painting", "There's an odd Cry emanating from the Belt Bag, better be careful!", false, false, "LC_ShyGuyPaintingTip2");
+                }
+            }
+        }
+
+        private IEnumerator DelayedTriggerFromBeltBag(PlayerControllerB player)
+        {
+            // Wait a short moment so the bag finishes updating network state
+            yield return null; // waits one frame
+            yield return new WaitForSeconds(0.2f);
+
+            if (!IsOwner)
+            {
+                ScopophobiaPlugin.Instance.LogInfoExtended($"[Painting] Ignoring belt bag trigger (not owner).");
+                yield break;
+            }
+
+            ScopophobiaPlugin.Instance.LogInfoExtended($"[Painting] Delayed trigger firing for {player.playerUsername}");
+
+            targetPlayer = player;
+            try
+            {
+                StartSpawnShyGuy(); // safe to call now
+                hasSpawned = true;
+            }
+            catch (Exception ex)
+            {
+                ScopophobiaPlugin.Instance.LogErrorExtended($"[Painting] Failed to spawn ShyGuy from belt bag: {ex}");
+            }
+        }
         private bool CanTriggerPainting()
         {
             return isHeld && !hasSpawned && !isTriggered && !isHeldByEnemy && playerHeldBy != null && IsOwner && !oldTarget.Contains(playerHeldBy) && StartOfRound.Instance.shipHasLanded && StartOfRound.Instance.timeSinceRoundStarted >= 2f && StartOfRound.Instance.currentLevel.spawnEnemiesAndScrap;
+        }
+        private bool CanTriggerPaintingInBag()
+        {
+            return !hasSpawned && !isTriggered && !isHeldByEnemy && IsOwner && !oldTarget.Contains(targetPlayer) && StartOfRound.Instance.shipHasLanded && StartOfRound.Instance.timeSinceRoundStarted >= 2f && StartOfRound.Instance.currentLevel.spawnEnemiesAndScrap;
         }
         public override void Update()
         {
@@ -131,7 +188,7 @@ namespace Scopophobia
         {
             if (PaintingSound == null) return;
             if (clip == null) return;
-            int num = Random.Range(0, clip.Length);
+            int num = UnityEngine.Random.Range(0, clip.Length);
             PaintingSound.clip = clip[num];
             PaintingSound.volume = 0.5f;
             PaintingSound.Play();

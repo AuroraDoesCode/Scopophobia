@@ -34,6 +34,7 @@ namespace Scopophobia
         public static ConfigEntry<string> nameToUseForPaintingConfig;
         public static ConfigEntry<int> ChanceOfShyGuyConfig;
         public static ConfigEntry<bool> TwitchIntegrationConfig;
+        public static ConfigEntry<bool> ShouldSpawnInBeltBagConfig;
         public static bool ExtendedLogging;
         public static bool appears;
 
@@ -78,6 +79,7 @@ namespace Scopophobia
         public static int PaintingSpawnRate;
         public static bool hidePaintingName;
         public static string nameToUseForPainting;
+        public static bool ShouldSpawnInBeltBag;
         public static int ChanceOfShyGuy;
 
         public static void SetModIcon(Sprite sprite)
@@ -133,6 +135,7 @@ namespace Scopophobia
             hidePaintingNameConfig = Bind("Painting Spawn Settings", "Hide Painting Name before Interaction", true, requiresRestart: true, "Disguise the painting as a different Loot Item? (Default: True)");
             nameToUseForPaintingConfig = Bind("Painting Spawn Settings", "Custom Painting Name", "Fancy Painting",requiresRestart: true, "Customise the Scannode name for the item on the map! (Default: Fancy Painting");
             ChanceOfShyGuyConfig = Bind("Painting Spawn Settings", "Spawn Chance", 35, requiresRestart: true, "Customise the spawn chance of shy guy spawning from the painting. Higher values mean more likely, lower values mean less likely. (Set to 100 for guaranteed spawns");
+            ShouldSpawnInBeltBagConfig = Bind("Painting Spawn Settings", "Can Spawn via Belt Bag", true, requiresRestart: false, "Can the Shy Guy Spawn even if the Painting is inside the Belt Bag?");
             //TwitchIntegrationConfig = Bind("Twitch Settings", "Enable Twitch Integation", false, requiresRestart: true, "Enable Twitch Integration");
             appears = AppearsConfig.Value;
             ExtendedLogging = ExtendedLoggingConfig.Value;
@@ -155,6 +158,7 @@ namespace Scopophobia
             hidePaintingName = hidePaintingNameConfig.Value;
             nameToUseForPainting = nameToUseForPaintingConfig.Value;
             ChanceOfShyGuy = ChanceOfShyGuyConfig.Value;
+            ShouldSpawnInBeltBag = ShouldSpawnInBeltBagConfig.Value;
         }
         private void SetupChangedEvents()
         {

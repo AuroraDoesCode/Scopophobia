@@ -27,7 +27,7 @@ namespace Scopophobia
                 return;
             }
 
-            EnemyType enemyType = EnemyHelper.GetEnemyType(EnemyName);
+            EnemyType enemyType = EnemyHelper.GetEnemyType("shy guy");
 
             if (enemyType == null)
             {

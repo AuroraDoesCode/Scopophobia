@@ -85,6 +85,7 @@ namespace Scopophobia
             harmony.PatchAll(typeof(AudioSpatializerDisabler));//disable annoying audiospacializer issue globally
             harmony.PatchAll(typeof(RoundManagerPatch));//credit Crit / Zehs
             harmony.PatchAll(typeof(StartOfRoundPatch));//credit Crit / Zehs
+            harmony.PatchAll(typeof(BeltBagItemPatch));
 
         }
         private static void NetcodePatchAwake()
