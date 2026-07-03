@@ -1,4 +1,4 @@
-**NOTE** This Github is secure, as of 03/07/2027, it is maintained by Myself (AuroraDoesCode), formerly TheUnknownCod3r. This notice serves as a placeholder, and will be updated once a month, as long as I maintain this mod. If at any time, this mod goes without a new game update, and this notice hasn't been updated, mod is discontinued. Otherwise, Forking and publishing your own version is strictly managed.
+**NOTE** This Github is secure, as of 03/07/2026, it is maintained by Myself (AuroraDoesCode), formerly TheUnknownCod3r. This notice serves as a placeholder, and will be updated once a month, as long as I maintain this mod. If at any time, this mod goes without a new game update, and this notice hasn't been updated, mod is discontinued. Otherwise, Forking and publishing your own version is strictly managed.
 
 **FULLY UPDATED FOR V80+!**
 # Scopophobia - SCP096 Has Escaped
