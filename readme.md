@@ -1,4 +1,6 @@
-**FULLY UPDATED FOR V70+!**
+**NOTE** This Github is secure, as of 03/07/2027, it is maintained by Myself (AuroraDoesCode), formerly TheUnknownCod3r. This notice serves as a placeholder, and will be updated once a month, as long as I maintain this mod. If at any time, this mod goes without a new game update, and this notice hasn't been updated, mod is discontinued. Otherwise, Forking and publishing your own version is strictly managed.
+
+**FULLY UPDATED FOR V80+!**
 # Scopophobia - SCP096 Has Escaped
 
 Scopophobia is a mod for Lethal Company that adds SCP096 - The Shy Guy into the game as a monster, complete with custom animations, sound effects, and behaviour. Credit for the mod originally goes to JasperCreations for all his hard work! <3
@@ -39,8 +41,9 @@ Upon arriving at SCP-096-1's location, <mark>SCP-096 will proceed to kill and â–
 - whatever else i think of lol
 
 # Credits
-- JasperCreations - Originally Developing Scopophobia for Lethal Company, Permission for the Uploaded source, and the unofficial update I did. 
-- TheUnknownCod3r (Myself) Updating the mod to v50. 
+- JasperCreations - Originally Developing Scopophobia for Lethal Company, supplied permission for the uploaded fork.  
+- AuroraDoesCode (TheUnknownCod3r, Myself) Current Maintainer.
+- Mr3DAnimator - Provided the ship break in Animation used in Scopophobia.
 - "SCP-096" by Dr Dan, from the SCP Wiki. Source: https://scpwiki.com/scp-096. Licensed under CC-BY-SA.
 - **Regalis** for creating **SCP: Containment Breach**.
 - **Omniary** and **FragdaddyXXL** for creating some sounds for **SCP: Containment Breach**.
