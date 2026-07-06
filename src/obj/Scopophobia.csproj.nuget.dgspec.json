@@ -70,6 +70,10 @@
               "target": "Package",
               "version": "[1.2.0, )"
             },
+            "LethalCompany.GameLibs.Steam": {
+              "target": "Package",
+              "version": "[81.0.5-ngd.0, )"
+            },
             "UnityEngine.Modules": {
               "include": "Compile",
               "target": "Package",

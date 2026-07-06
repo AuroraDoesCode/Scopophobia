@@ -14,7 +14,7 @@ namespace Scopophobia
     {
         [Header("Painting Settings")]
         public List<PlayerControllerB> oldTarget = new List<PlayerControllerB>();//change this to a list so we can save more players than just one for each painting.
-        public PlayerControllerB targetPlayer;
+        public PlayerControllerB? targetPlayer;
         public int randomChance;
         private bool updatedScannode;
 
@@ -198,11 +198,20 @@ namespace Scopophobia
             PlayerControllerB target = StartOfRound.Instance.allPlayerScripts[targetClientId];
             Vector3 spawnPos = RoundManager.Instance.GetRandomNavMeshPositionInRadius(target.transform.position, 15f, RoundManager.Instance.navHit);
             ScopophobiaPlugin.Instance.LogInfoExtended($"[SpawnEnemyOnServer] Triggered by client {targetClientId} ({StartOfRound.Instance.allPlayerScripts[targetClientId].playerUsername})");
-            SpawnableEnemyWithRarity enemy = RoundManager.Instance.currentLevel.Enemies.Find((SpawnableEnemyWithRarity x) => x.enemyType.enemyName.ToLower() == "shy guy");
-            if (enemy == null)
+            SpawnableEnemyWithRarity enemy = RoundManager.Instance.currentLevel.Enemies.Find(x => x.enemyType.enemyName.ToLower() == "shy guy");
+            if (enemy == null)//if enemy not found, shy guy not included in level enemies?
             {
-                ScopophobiaPlugin.Instance.LogInfoExtended("Shy Guy Enemy Not found");
-                return;
+                ScopophobiaPlugin.Instance.LogInfoExtended("Shy Guy Enemy Not found in level, trying local Asset");
+                try
+                {
+                    if (NetworkUtils.IsNetworkPrefab(ScopophobiaPlugin.shyGuy.enemyPrefab))
+                    {
+                        enemy = ScopophobiaPlugin.shyEnemy;
+                    }
+                }
+                catch {
+                    ScopophobiaPlugin.Instance.LogErrorExtended("FATAL ERROR! Shy Guy is not a registered NetworkPrefab");
+                }
             }
             GameObject obj = RoundManager.Instance.SpawnEnemyGameObject(spawnPos,0f, 1, enemy.enemyType);
             ShyGuyAI ai = obj.GetComponent<ShyGuyAI>();

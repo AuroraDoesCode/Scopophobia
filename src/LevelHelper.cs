@@ -19,7 +19,7 @@ namespace Scopophobia
             }
         }
 
-        public static SelectableLevel GetLevelByName(string planetName)
+        public static SelectableLevel? GetLevelByName(string planetName)
         {
             if (StartOfRound.Instance == null) return null;
 
@@ -71,7 +71,7 @@ namespace Scopophobia
         {
             spawnWeight = 0;
 
-            SelectableLevel level = GetLevelByName(planetName);
+            SelectableLevel? level = GetLevelByName(planetName);
 
             if (level == null)
             {
@@ -109,7 +109,7 @@ namespace Scopophobia
                 return;
             }
 
-            SelectableLevel level = GetLevelByName(planetName);
+            SelectableLevel? level = GetLevelByName(planetName);
 
             if (level == null)
             {
@@ -142,7 +142,7 @@ namespace Scopophobia
                 return;
             }
 
-            SelectableLevel level = GetLevelByName(planetName);
+            SelectableLevel? level = GetLevelByName(planetName);
 
             if (level == null)
             {

@@ -119,7 +119,6 @@ namespace ShyGuy.AI
         private bool isInElevatorStartRoom;
         public bool hasBeenSpawned;
         private float timeAtLastUsingEntrance;
-        public new NavMeshAgent? agent = null;
         public static MineshaftElevatorController elevatorScript;
         public List<PlayerControllerB> SCP096Targets = new List<PlayerControllerB>();
         public override void Start()

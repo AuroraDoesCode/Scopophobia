@@ -30,7 +30,7 @@ namespace Scopophobia
                 return;
             }
 
-            EnemyType enemyType = EnemyHelper.GetEnemyType(EnemyName);
+            EnemyType? enemyType = EnemyHelper.GetEnemyType(EnemyName);
             
             if (enemyType == null)
             {
@@ -79,7 +79,7 @@ namespace Scopophobia
                 return;
             }
 
-            EnemyType enemyType = EnemyHelper.GetEnemyType(EnemyName);
+            EnemyType? enemyType = EnemyHelper.GetEnemyType(EnemyName);
 
             if (enemyType == null)
             {
@@ -113,7 +113,7 @@ namespace Scopophobia
             EnemyDataList.Add(enemyData);
         }
 
-        public static EnemyData GetEnemyData(string planetName)
+        public static EnemyData? GetEnemyData(string planetName)
         {
             foreach (var enemyData in EnemyDataList)
             {
@@ -133,7 +133,7 @@ namespace Scopophobia
 
         public static void SetEnemyDataForCurrentLevel()
         {
-            EnemyData enemyData = GetEnemyData(LevelHelper.CurrentPlanetName);
+            EnemyData? enemyData = GetEnemyData(LevelHelper.CurrentPlanetName);
 
             if (enemyData == null)
             {

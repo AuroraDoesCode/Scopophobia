@@ -24,7 +24,7 @@ namespace Scopophobia
                 return;
             }
 
-            EnemyType enemyType = GetEnemyType(enemyName);
+            EnemyType? enemyType = GetEnemyType(enemyName);
 
             if (enemyType == null)
             {
@@ -32,7 +32,7 @@ namespace Scopophobia
                 return;
             }
 
-            SelectableLevel level = LevelHelper.GetLevelByName(planetName);
+            SelectableLevel? level = LevelHelper.GetLevelByName(planetName);
 
             if (level == null)
             {
@@ -74,7 +74,7 @@ namespace Scopophobia
                 return;
             }
 
-            EnemyType enemyType = GetEnemyType(enemyName);
+            EnemyType? enemyType = GetEnemyType(enemyName);
 
             if (enemyType == null)
             {
@@ -107,7 +107,7 @@ namespace Scopophobia
                 return;
             }
 
-            EnemyType enemyType = GetEnemyType(enemyName);
+            EnemyType? enemyType = GetEnemyType(enemyName);
 
             if (enemyType == null)
             {
@@ -128,7 +128,7 @@ namespace Scopophobia
             ScopophobiaPlugin.Instance.LogInfoExtended($"Set enemy probability curve. (EnemyName: {enemyName}, Values: {string.Join(", ", values)})");
         }
 
-        public static EnemyType GetEnemyType(string enemyName)
+        public static EnemyType? GetEnemyType(string enemyName)
         {
             foreach (var enemyType in GetEnemyTypes())
             {
