@@ -37,6 +37,7 @@ namespace Scopophobia
         public static ConfigEntry<string> nameToUseForPaintingConfig;
         public static ConfigEntry<int> ChanceOfShyGuyConfig;
         public static ConfigEntry<bool> TwitchIntegrationConfig;
+        public static ConfigEntry<bool> canBreakIntoShipConfig;
         public static bool ExtendedLogging;
         public static bool appears;
 
@@ -82,6 +83,7 @@ namespace Scopophobia
         public static bool hidePaintingName;
         public static string nameToUseForPainting;
         public static int ChanceOfShyGuy;
+        public static bool canBreakIntoShip;
 
         public static void SetModIcon(Sprite sprite)
         {
@@ -136,7 +138,6 @@ namespace Scopophobia
             hidePaintingNameConfig = Bind("Painting Spawn Settings", "Hide Painting Name before Interaction", true, requiresRestart: true, "Disguise the painting as a different Loot Item? (Default: True)");
             nameToUseForPaintingConfig = Bind("Painting Spawn Settings", "Custom Painting Name", "Fancy Painting",requiresRestart: true, "Customise the Scannode name for the item on the map! (Default: Fancy Painting");
             ChanceOfShyGuyConfig = Bind("Painting Spawn Settings", "Spawn Chance", 35, requiresRestart: true, "Customise the spawn chance of shy guy spawning from the painting. Higher values mean more likely, lower values mean less likely. (Set to 100 for guaranteed spawns");
-            //TwitchIntegrationConfig = Bind("Twitch Settings", "Enable Twitch Integation", false, requiresRestart: true, "Enable Twitch Integration");
             appears = AppearsConfig.Value;
             ExtendedLogging = ExtendedLoggingConfig.Value;
             hasGlowingEyes = HasGlowingEyesConfig.Value;

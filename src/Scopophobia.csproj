@@ -13,7 +13,7 @@
   <!-- Thunderstore CLI stuff -->
   <PropertyGroup>
     <!-- Your Thunderstore Team name. This will be used by tcli when building our Thunderstore package. -->
-    <ThunderstoreTeam>theunknowncod3r</ThunderstoreTeam>
+    <ThunderstoreTeam>AuroraBytes</ThunderstoreTeam>
     <!-- Configure description for Thunderstore at ./Thunderstore/thunderstore.toml -->
   </PropertyGroup>
 
@@ -24,7 +24,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
 	  <Authors>Adds SCP-096 Shy Guy To Lethal Company, Complete with Custom Animations, Sound effects, and more.</Authors>
-	  <PackageVersion>1.3.2</PackageVersion>
+	  <PackageVersion>1.3.5</PackageVersion>
 	  <PackageIcon>icon.jpg</PackageIcon>
   </PropertyGroup>
 
@@ -58,7 +58,7 @@
     <SignAssembly>False</SignAssembly>
     <Title>Scopophobia</Title>
     <Description>Adds SCP-096 Shy Guy To Lethal Company, Complete with Custom Animations, Sound effects, and more.</Description>
-    <Copyright>TheUnknownCod3r</Copyright>
+    <Copyright>AuroraBytes</Copyright>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>

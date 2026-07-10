@@ -14,7 +14,7 @@ using BepInEx.Bootstrap;
 namespace Scopophobia
 {
 
-    [BepInPlugin("Scopophobia", "Scopophobia", "1.3.4")]
+    [BepInPlugin("Scopophobia", "Scopophobia", "1.3.5")]
     [BepInDependency(LethalConfigProxy.PLUGIN_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     public class ScopophobiaPlugin : BaseUnityPlugin
     {
