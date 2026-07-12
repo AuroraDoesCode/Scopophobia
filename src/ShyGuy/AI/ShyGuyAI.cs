@@ -114,6 +114,7 @@ namespace ShyGuy.AI
 
         private float timeToTrigger = 0.5f;
 
+        private NavMeshPath? pathToTeleport;
         private float lastInterval;
 
         private bool inKillAnimation;
@@ -132,6 +133,7 @@ namespace ShyGuy.AI
             if(!hasBeenSpawned) hasBeenSpawned = true;
             if (elevatorScript == null) elevatorScript = FindObjectOfType<MineshaftElevatorController>();//Lets see if the Elevator Controls exist, I hope they do, we're on the mineshaft
             triggerDuration = Config.triggerTime;
+            pathToTeleport = new NavMeshPath();
             //if(Config.RandomSpawnSizes){ this.transform.localScale = new Vector3(Random.Range(0, 1), Random.Range(0, 1), Random.Range(0, 1)); }
             Transform leftEye = null;
             Queue<Transform> queue = new Queue<Transform>();
@@ -394,12 +396,11 @@ namespace ShyGuy.AI
                             if (!hunted.isPlayerDead && allowedToLeave)
                             {
                                 float distance = Vector3.Distance(hunted.transform.position, transform.position);
-                                if (PlayerIsTargetable2(hunted, true, false) && Vector3.Distance(hunted.transform.position, base.transform.position) < closestDist)
+                                if (PlayerIsTargetable2(hunted, true, false) && Vector3.Distance(hunted.transform.position, transform.position) < closestDist)
                                 //if (!hunted.isPlayerDead && hunted.isPlayerControlled && hunted.inAnimationWithEnemy == null && hunted.sinkingValue < 0.73f && distance < float.PositiveInfinity)
                                 {
                                     closestDist = Vector3.Magnitude(hunted.transform.position - transform.position);
                                     targetPlayer = hunted;
-                                    base.targetPlayer = targetPlayer;
                                 }
                             }
                             else
@@ -435,48 +436,43 @@ namespace ShyGuy.AI
                                     isInElevatorStartRoom = true;
                                     //ScopophobiaPlugin.logger.LogInfo("Shy guy is at Upper Elevator");
                                 }
-                                //ScopophobiaPlugin.logger.LogInfo("Map Interior is Mineshaft, Committing to Elevator Checks");
-                                if (!isInElevatorStartRoom)//if not in the Elevator Start Room, Need to call the Elevator
-                                {
-                                    if (Vector3.Distance(targetPlayer.transform.position, mainEntrancePosition) < 14f || !targetPlayer.isInsideFactory) { UseElevator(goUp: true); break; }
-                                }
-                                else if (!targetPlayer.isPlayerDead && targetPlayer.isPlayerControlled && targetPlayer.isInsideFactory)//Is the player Inside, or hiding, Lets Distance check them from the Top Point
-                                {
-                                    if (Vector3.Distance(targetPlayer.transform.position, mainEntrancePosition) > 12f) { UseElevator(goUp: false);  break; }
+                                bool goUp = !isInElevatorStartRoom;
+                                bool shouldUseElevator = goUp ? Vector3.Distance(targetPlayer.transform.position, mainEntrancePosition) < 14f || !targetPlayer.isInsideFactory : !targetPlayer.isPlayerDead && targetPlayer.isPlayerControlled && targetPlayer.isInsideFactory && Vector3.Distance(targetPlayer.transform.position, mainEntrancePosition) > 12f;
+                                if (shouldUseElevator){
+                                    UseElevator(goUp); break;
                                 }
                             }
-                            if (targetPlayer.isInsideFactory != !isOutside)//I think we should have this here, so he can run the config for exiting facility
-                            {//new code. if not already pathing, lets find closest teleport. Then move to it if not right there. Else, continue as normal.
+                            if (targetPlayer.isInsideFactory != !isOutside)
+                            {
                                 if (!pathingToTeleport)
                                 {
                                     ScopophobiaPlugin.Instance.LogInfoExtended($"{targetPlayer.name} Is Outside: {!targetPlayer.isInsideFactory}, Looking for Teleport");
+
                                     GetClosestTeleportAndMove();
+                                    return;
                                 }
-                                else if(pathingToTeleport)//separate these into their own loop, otherwise shy guy gets into a bugged state of only going out once
+                                if (Vector3.Distance(transform.position, closestTeleport.entrancePoint.position) < 3f)
                                 {
-                                    if (Vector3.Distance(transform.position, closestTeleport.entrancePoint.position) < 3f)//door distance check
-                                    {
-                                        TeleAndRefreshEnemy(closestTeleport.exitScript.entrancePoint.position, !isOutside);
-                                        agent.speed = 0f;
-                                        return;
-                                    }
-                                    else//not at door, lets move on
-                                    {
-                                        movingTowardsTargetPlayer = false;
-                                        SetDestinationToPosition(closestTeleport.entrancePoint.transform.position);
-                                        ScopophobiaPlugin.Instance.LogInfoExtended($"{targetPlayer.name} is not in area, heading to closest Tele: {closestTeleport.entranceId}");
-                                    }
+                                    TeleAndRefreshEnemy(closestTeleport.exitScript.entrancePoint.position,!isOutside);
+                                    agent.speed = 0f;
+                                    return;
                                 }
+
+                                movingTowardsTargetPlayer = false;
+                                SetDestinationToPosition(closestTeleport.entrancePoint.position);
+
+                                ScopophobiaPlugin.Instance.LogInfoExtended($"{targetPlayer.name} is not in area, heading to closest Tele: {closestTeleport.entranceId}");
+
+                                return;
                             }
                             else//Player in sights, continuing attack strategy
                             {
-                                if (PathIsIntersectedByLineOfSight(targetPlayer.transform.position, false, false, true))
-                                    if (agent.CalculatePath(targetPlayer.transform.position, path1) && path1.status == NavMeshPathStatus.PathComplete)
-                                    {
-                                        agent.SetDestination(targetPlayer.transform.position);
+                                if (PathIsIntersectedByLineOfSight(targetPlayer.transform.position, false, false, true) && agent.CalculatePath(targetPlayer.transform.position, path1) && path1.status == NavMeshPathStatus.PathComplete)
+                                {
+                                        agent.SetDestination(targetPlayer.transform.position);//doubt this is right, but we can try it
                                         //SetMovingTowardsTargetPlayer(targetPlayer);
-                                    }
-                                    else SetMovingTowardsTargetPlayer(targetPlayer);
+                                }
+                                else SetMovingTowardsTargetPlayer(targetPlayer);
                             }
                         }
                         else if (SCP096Targets.Count <= 0)
@@ -493,45 +489,52 @@ namespace ShyGuy.AI
         public void GetClosestTeleportAndMove()
         {
             if (pathingToTeleport)
-            {
                 return;
-            }
+
             List<EntranceTeleport> teleports = isOutside ? outsideTeleports : insideTeleports;
-            float closestDistance = Vector3.Distance(transform.position, mainEntrance.entrancePoint.position);
-            EntranceTeleport bestTeleport = mainEntrance;
+
+            EntranceTeleport? bestTeleport = null;
+            float shortestPathLength = float.MaxValue;
+
             foreach (EntranceTeleport tele in teleports)
             {
                 if (!tele.FindExitPoint() || tele.entrancePoint == null)
-                {
                     continue;
-                }
-                if (agent.CalculatePath(tele.entrancePoint.position, path1) && path1.status == NavMeshPathStatus.PathComplete)
+
+                if (!agent.CalculatePath(tele.entrancePoint.position, pathToTeleport))
+                    continue;
+
+                if (pathToTeleport.status != NavMeshPathStatus.PathComplete)
+                    continue;
+
+                float pathLength = GetPathLength(pathToTeleport);
+
+                if (pathLength < shortestPathLength)
                 {
-                    float dist = Vector3.Distance(transform.position, tele.entrancePoint.transform.position);
-                    if (dist < closestDistance)
-                    {
-                        closestDistance = dist;
-                        bestTeleport = tele;
-                    }
+                    shortestPathLength = pathLength;
+                    bestTeleport = tele;
                 }
             }
-            if (bestTeleport == mainEntrance)
+            if (bestTeleport == null)
             {
-                ScopophobiaPlugin.Instance.LogInfoExtended($"No closer teleport found. Heading to main entrance: {mainEntrance.entranceId}");
+                bestTeleport = mainEntrance;
+
+                ScopophobiaPlugin.Instance.LogInfoExtended($"No valid teleport found. Falling back to main entrance: {mainEntrance.entranceId}");
             }
             else
             {
-                ScopophobiaPlugin.Instance.LogInfoExtended($"Closest teleport found: {bestTeleport.entranceId}. Pathing there.");
+                ScopophobiaPlugin.Instance.LogInfoExtended($"Closest teleport found: {bestTeleport.entranceId} (Path Length: {shortestPathLength:F1}m)");
             }
+
             closestTeleport = bestTeleport;
-            closestTeleportPosition = bestTeleport.entrancePoint.transform.position;
+            closestTeleportPosition = bestTeleport.entrancePoint.position;
             pathingToTeleport = true;
         }
 
         public void TeleAndRefreshEnemy(Vector3 Pos, bool setOutside)
         {
             timeAtLastUsingEntrance = Time.realtimeSinceStartup;
-            Vector3 navMeshPosition = RoundManager.Instance.GetNavMeshPosition(Pos, default(NavMeshHit), 5f, -1);
+            Vector3 navMeshPosition = RoundManager.Instance.GetNavMeshPosition(Pos, default(NavMeshHit), 1f, -1);
             ScopophobiaPlugin.Instance.LogInfoExtended($"Teleport Requested: {Pos} | NavMesh Result: {navMeshPosition}, Teleporting Outside: {setOutside}");
             //Pos.y = Pos.y + 3f;//is this needed? some maps cause a tp under the map door?
             if (IsOwner)
@@ -545,13 +548,28 @@ namespace ShyGuy.AI
                 transform.position = navMeshPosition;
             }
             serverPosition = navMeshPosition;
-            if(transform.position.y > -80f) SetEnemyOutside(true); else SetEnemyOutside(false);
+            SetEnemyOutside(setOutside);
             if (closestTeleport?.doorAudios != null && closestTeleport.doorAudios.Length != 0)
             {
                 closestTeleport.entrancePointAudio.PlayOneShot(closestTeleport.doorAudios[0]);
                 WalkieTalkie.TransmitOneShotAudio(closestTeleport.entrancePointAudio, closestTeleport.doorAudios[0], 1f);
             }
             pathingToTeleport = false;
+            closestTeleportPosition = Vector3.negativeInfinity;
+        }
+        private float GetPathLength(NavMeshPath path)
+        {
+            float length = 0f;
+
+            if (path.corners.Length < 2)
+                return length;
+
+            for (int i = 1; i < path.corners.Length; i++)
+            {
+                length += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+            }
+
+            return length;
         }
         private bool UseElevator(bool goUp)
         {
@@ -619,7 +637,7 @@ namespace ShyGuy.AI
                     if (!Config.hasMaxTargets || SCP096Targets.Count < Config.maxTargets)
                     {
                         ScopophobiaPlugin.Instance.LogInfoExtended($"Adding {GameNetworkManager.Instance.localPlayerController.actualClientId} To Targets. Has Seen Face: {canSeeFace}");
-                        AddTargetToList((int)GameNetworkManager.Instance.localPlayerController.actualClientId,remove:false,"Seen Face");
+                        AddTargetToList((int)GameNetworkManager.Instance.localPlayerController.playerClientId,remove:false,"Seen Face");
                     }
                     if (currentBehaviourStateIndex == 0)
                     {

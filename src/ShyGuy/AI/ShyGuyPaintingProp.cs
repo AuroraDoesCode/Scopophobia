@@ -102,6 +102,8 @@ namespace Scopophobia
                 if (ShyGuy != null && ShyGuy.hasBeenSpawned)
                 {
                       oldTarget.Add(playerHeldBy);//fix multiple spawning via players
+                    if (ShyGuy.currentBehaviourStateIndex != 1)
+                        ShyGuy.SwitchToBehaviourState(1);
                     StartCoroutine(InitializeAI(ShyGuy, playerHeldBy));
                     ScopophobiaPlugin.Instance.LogInfoExtended($"Triggering Already Spawned Shy Guy!");
                 }
@@ -170,7 +172,9 @@ namespace Scopophobia
         private IEnumerator InitializeAI(ShyGuyAI ai, PlayerControllerB target)
         {
             yield return new WaitForSeconds(Config.triggerTime);//delay by trigger
-            ai.AddTargetToListServerRpc((int)target.actualClientId, false);
+            ai.AddTargetToList((int)target.actualClientId, false, "Painting");
+            if (ai.currentBehaviourStateIndex != 2)
+                ai.SwitchToBehaviourState(2);
             ResetSpawnState();
         }
     }

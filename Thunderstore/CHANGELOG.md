@@ -1,3 +1,10 @@
+# 1.3.5
+## Version 81 Fixes
+This update is very delayed, I apologise folks. HOWEVER, several bugs have been squashed with this update!
+- Finally actually fix the damn painting. It should now work reliably for all clients, and players. 
+- Finally track down the player Targetting bugs, hopefully his AI tracking is working properly now. Killbinding can still break him, which I need to look into.
+- Minor cleanup around the board, Fix for Coroner Support, 
+
 # 1.3.4
 ## v80 Spawn Fix
 + Fixes an error thrown when grabbing enemy data for the current Level. (Reported by @Glacius on Discord) 
